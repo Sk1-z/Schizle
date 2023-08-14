@@ -1,0 +1,6 @@
+# Misc files
+*.txt*
+# Binaries
+/bin/debug/*
+# Make output
+obj/
