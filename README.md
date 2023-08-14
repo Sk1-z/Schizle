@@ -17,5 +17,7 @@ Schizle is an _In-progress_ Lightweight scripting language with builtin support 
 ## Documentation
 
 [View docs online](docs/NOTDONE.md)
+
 [View docs on github](docs/NOTDONE.md)
+
 [Download Documentation](docs/NOTDONE.md)
