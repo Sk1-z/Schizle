@@ -3,7 +3,7 @@
 test/**
 
 # Binaries
-/bin/debug/*
+/bin/
 
 # Makefile
 /obj/
