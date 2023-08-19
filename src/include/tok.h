@@ -1,5 +1,3 @@
-#pragma once
-
 #include <stdlib.h>
 #include <string.h>
 
@@ -73,4 +71,44 @@ list_s *tokenize(const char *string)
     }
 
     return brokenString;
+}
+
+typedef struct
+{
+    long *offset;
+    size_t size;
+    size_t capacity;
+} list_byteOffset;
+
+void pushOffset(list_byteOffset *list, long val)
+{
+    if (list->size == list->capacity)
+    {
+        list->capacity *= 2;
+        list->offset = (long *)realloc(list->offset, list->capacity * sizeof(long));
+    }
+    list->offset[list->size] = val;
+    list->size++;
+}
+
+typedef struct
+{
+    list_s *toks;
+    list_byteOffset offsets;
+    int num;
+    long loopStart;
+} line;
+
+void initOffsets(line *line)
+{
+    list_byteOffset *list = &(line->offsets);
+    list->size = 1;
+    list->capacity = 1;
+    list->offset = (long *)malloc(sizeof(long));
+    pushOffset(list, 0);
+}
+
+void freeOffsets(list_byteOffset *list)
+{
+    free(list->offset);
 }
