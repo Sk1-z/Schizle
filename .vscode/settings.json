@@ -1,9 +1,0 @@
-{
-  "files.associations": {
-    "lists.h": "c",
-    "iterator": "c",
-    "initializer_list": "c",
-    "type_traits": "c",
-    "xutility": "c"
-  }
-}
