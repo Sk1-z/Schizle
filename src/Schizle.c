@@ -232,7 +232,7 @@ exit:
         freeTable(&varTable);
 
         freeOffsets(&(fline.offsets));
-        printf("\n\nsuccesfully freed memory");
+        printf("\n\nsuccessfully freed memory");
     }
 
     if (argc == 4)
