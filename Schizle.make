@@ -22,7 +22,7 @@ ifeq ($(config),debug)
   endif
   TARGETDIR = bin/Debug
   TARGET = $(TARGETDIR)/Schizle.exe
-  OBJDIR = obj/Debug/Schizle
+  OBJDIR = obj/Debug
   DEFINES +=
   INCLUDES +=
   FORCE_INCLUDE +=
@@ -57,7 +57,7 @@ ifeq ($(config),release)
   endif
   TARGETDIR = bin/Release
   TARGET = $(TARGETDIR)/Schizle.exe
-  OBJDIR = obj/Release/Schizle
+  OBJDIR = obj/Release
   DEFINES +=
   INCLUDES +=
   FORCE_INCLUDE +=

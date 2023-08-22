@@ -16,7 +16,7 @@ list_s *tokenize(const char *string)
 
     for (size_t i = 0; i <= strLen; i++)
     {
-        if (string[i] == ' ' || string[i] == '\t' || string[i] == '\n' || string[i] == '\0')
+        if (string[i] == ' ' || string[i] == '\t' || string[i] == '\0')
         {
             if (tokLen > 0)
             {
