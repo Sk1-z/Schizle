@@ -12,14 +12,14 @@ typedef struct
     size_t capacity;
 } list_s;
 
-void initList_s(list_s *list)
+void init_ls(list_s *list)
 {
     list->data = (char **)malloc(0);
     list->size = 0;
     list->capacity = 0;
 }
 
-void free_s(list_s *list)
+void free_ls(list_s *list)
 {
     for (size_t i = 0; i < list->size; ++i)
     {
@@ -28,7 +28,7 @@ void free_s(list_s *list)
     free(list->data);
 }
 
-void clear_s(list_s *list)
+void clear_ls(list_s *list)
 {
     for (size_t i = 0; i < list->size; ++i)
     {
@@ -38,7 +38,7 @@ void clear_s(list_s *list)
     list->size = 0;
 }
 
-void listPush_s(list_s *list, char *val)
+void push_ls(list_s *list, char *val)
 {
     if (list->size == list->capacity)
     {
@@ -50,18 +50,18 @@ void listPush_s(list_s *list, char *val)
     list->size++;
 }
 
-void listCat_s(list_s *list, size_t i, char *string)
+void cat_ls(list_s *list, size_t i, char *string)
 {
     list->data[i] = (char *)realloc(list->data[i], (strlen(list->data[i]) + strlen(string) + 2) * sizeof(char));
     strcat(list->data[i], string);
 }
 
-char *listGet_s(list_s *list, size_t i)
+char *get_ls(list_s *list, size_t i)
 {
     return list->data[i];
 }
 
-size_t listGetIndex_s(list_s *list, char *string)
+size_t getIndex_ls(list_s *list, char *string)
 {
     for (size_t i = 0; i < list->size; ++i)
     {
@@ -82,19 +82,19 @@ typedef struct
     size_t capacity;
 } list_si32;
 
-void initList_si32(list_si32 *list)
+void init_lsi32(list_si32 *list)
 {
     list->data = (int32_t *)malloc(0);
     list->size = 0;
     list->capacity = 0;
 }
 
-void free_si32(list_si32 *list)
+void free_lsi32(list_si32 *list)
 {
     free(list->data);
 }
 
-void clear_si32(list_si32 *list)
+void clear_lsi32(list_si32 *list)
 {
     for (size_t i = 0; i < list->size; ++i)
     {
@@ -104,7 +104,7 @@ void clear_si32(list_si32 *list)
     list->size = 0;
 }
 
-void listPush_si32(list_si32 *list, int32_t val)
+void push_lsi32(list_si32 *list, int32_t val)
 {
     if (list->size == list->capacity)
     {
@@ -113,4 +113,33 @@ void listPush_si32(list_si32 *list, int32_t val)
     }
     list->data[list->size] = val;
     list->size++;
+}
+
+void pushBool_lsi32(list_si32 *list, int val)
+{
+    if (list->size == list->capacity)
+    {
+        list->capacity = (size_t)((double)list->capacity * 1.5 + 1);
+        list->data = (int32_t *)realloc(list->data, list->capacity * sizeof(int32_t));
+    }
+    if (val == 1)
+    {
+        list->data[list->size] = 1;
+        list->size++;
+    }
+    else if (val == 0)
+    {
+        list->data[list->size] = 0;
+        list->size++;
+    }
+}
+
+int32_t get_lsi32(list_si32 *list, size_t i)
+{
+    return list->data[i];
+}
+
+void set_lsi32(list_si32 *list, size_t i, int32_t val)
+{
+    list->data[i] = val;
 }

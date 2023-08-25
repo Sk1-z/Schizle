@@ -2,12 +2,15 @@
 
 #include <stdlib.h>
 
-// 0 = CER
+// 0 = UNDEF
 // 1 = state
 // 2 = nat
-// 3 = sint
-// 4 = frac
-// 5 = chars
+// 3 = nat64
+// 4 = sint
+// 5 = sint64
+// 6 = frac
+// 7 = frac64
+// 8 = text
 
 // argv[0] = schizle; argc 1
 // argv[1] = run; argc 2

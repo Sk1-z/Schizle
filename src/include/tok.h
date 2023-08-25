@@ -4,14 +4,33 @@
 #include "lists.h"
 
 // Tokenize string by whitespace and quotes
-
-list_s *tokenize(const char *string)
+typedef struct
 {
-    list_s *brokenString = (list_s *)malloc(sizeof(list_s));
-    initList_s(brokenString);
+    list_si32 isStringL;
+    list_s *toks;
+
+} token;
+
+void initToken(token *tok)
+{
+    init_ls(tok->toks);
+    init_lsi32(&(tok->isStringL));
+}
+
+void freeToken(token *tok)
+{
+    free_ls(tok->toks);
+    free_lsi32(&(tok->isStringL));
+}
+
+token *tokenize(const char *string)
+{
+    token *tok;
+    initToken(tok);
 
     size_t strLen = strlen(string);
     size_t tokLen = 0;
+    size_t tokNum = 0;
     char *wordStart = (char *)string;
 
     for (size_t i = 0; i <= strLen; i++)
@@ -23,9 +42,27 @@ list_s *tokenize(const char *string)
                 char *word = (char *)malloc((tokLen + 1) * sizeof(char));
                 strncpy(word, wordStart, tokLen);
                 word[tokLen] = '\0';
-                listPush_s(brokenString, word);
+                push_ls(tok->toks, word);
                 tokLen = 0;
+
+                push_lsi32(&(tok->isStringL), 0);
             }
+            wordStart = (char *)string + i + 1;
+        }
+        else if (string[i] == '\n')
+        {
+            if (tokLen > 0)
+            {
+                char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                strncpy(word, wordStart, tokLen);
+                word[tokLen] = '\0';
+                push_ls(tok->toks, word);
+                tokLen = 0;
+
+                push_lsi32(&(tok->isStringL), 0);
+            }
+            push_ls(tok->toks, "\n");
+            push_lsi32(&(tok->isStringL), 0);
             wordStart = (char *)string + i + 1;
         }
         else if (string[i] == '\'')
@@ -37,14 +74,14 @@ list_s *tokenize(const char *string)
                 i++;
                 tokLen++;
             }
-            if (string[i] == '\'')
-            {
-                char *word = (char *)malloc((tokLen + 1) * sizeof(char));
-                strncpy(word, wordStart, tokLen);
-                word[tokLen] = '\0';
-                listPush_s(brokenString, word);
-                tokLen = 0;
-            }
+
+            char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+            strncpy(word, wordStart, tokLen);
+            word[tokLen] = '\0';
+            push_ls(tok->toks, word);
+            tokLen = 0;
+
+            push_lsi32(&(tok->isStringL), 1);
         }
         else if (string[i] == '\"')
         {
@@ -55,14 +92,14 @@ list_s *tokenize(const char *string)
                 i++;
                 tokLen++;
             }
-            if (string[i] == '\"')
-            {
-                char *word = (char *)malloc((tokLen + 1) * sizeof(char));
-                strncpy(word, wordStart, tokLen);
-                word[tokLen] = '\0';
-                listPush_s(brokenString, word);
-                tokLen = 0;
-            }
+
+            char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+            strncpy(word, wordStart, tokLen);
+            word[tokLen] = '\0';
+            push_ls(tok->toks, word);
+            tokLen = 0;
+
+            push_lsi32(&(tok->isStringL), 1);
         }
         else
         {
@@ -70,7 +107,7 @@ list_s *tokenize(const char *string)
         }
     }
 
-    return brokenString;
+    return tok;
 }
 
 typedef struct
@@ -93,7 +130,7 @@ void pushOffset(list_byteOffset *list, long val)
 
 typedef struct
 {
-    list_s *toks;
+    token *ftoken;
     list_byteOffset offsets;
     int num;
     long loopStart;
