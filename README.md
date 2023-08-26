@@ -16,9 +16,9 @@ Create a file named firstprogram.ski and write the below into it
 _ Hello world program
 
 params _name
-call cmdl_out
+pcall cmdl_out
 params " says hello world"
-call cmdl_out
+pcall cmdl_out
 ```
 Then run the following command with Schizle.exe in the same directory, or use the relative path.
 ```
