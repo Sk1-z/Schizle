@@ -9,6 +9,8 @@
 #define ERROR_HERE printf("\nERROR_HERE\n");
 #define WARNING_HERE printf("\nWARNING_HERE\n");
 
+#define THROW_ERROR(arg) throwE(arg, argv, fline.num)
+
 // --Debug--
 int pointNum = 1;
 

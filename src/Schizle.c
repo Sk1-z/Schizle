@@ -5,7 +5,6 @@
 
 #include "include/throwError.h"
 #include "include/throwWarning.h"
-#include "include/utils.h"
 #include "include/tok.h"
 #include "include/program.h"
 
@@ -101,6 +100,14 @@ int main(int argc, char *argv[])
                     {
                         PRINTTYPEDB("loop");
                     }
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "call"))
+                    {
+                        PRINTTYPEDB("function call");
+                        if (!strcmp(get_ls(fline.ftoken->toks, 1), "nl"))
+                        {
+                            printf("\n");
+                        }
+                    }
                     else if (!strcmp(get_ls(fline.ftoken->toks, 0), "params"))
                     {
                         PRINTTYPEDB("parameter declaration");
@@ -128,9 +135,9 @@ int main(int argc, char *argv[])
 
                         paramInit = 1;
                     }
-                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "call"))
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "pcall"))
                     {
-                        PRINTTYPEDB("function call");
+                        PRINTTYPEDB("function call with parameters");
 
                         if (!paramInit)
                         {

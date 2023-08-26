@@ -1,0 +1,21 @@
+_ Hello world program
+
+params "Hello world"
+pcall cmdl_out
+call nl
+
+_ Using parameterless functions to say hello world with a new line
+
+params "Hello"
+pcall cmdl_out
+call nl
+params "world (on a new line)"
+pcall cmdl_out
+call nl
+
+_ Making the program say hello world
+
+params _name
+pcall cmdl_out
+params " says hello world!"
+pcall cmdl_out
