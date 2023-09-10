@@ -1,6 +1,6 @@
 #include "../../std/errors.h"
 
-void throwE(int errorNum, char **argv)
+void throwError(int errorNum, char **argv, int lineNum)
 {
     switch (errorNum)
     {

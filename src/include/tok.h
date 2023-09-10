@@ -6,24 +6,24 @@
 // Tokenize string by whitespace and quotes
 typedef struct
 {
-    list_si32 isStringL;
-    list_s *toks;
+    list_lui16 isStringL;
+    list_ls *toks;
 
 } token;
 
 void initToken(token *tok)
 {
     init_ls(tok->toks);
-    init_lsi32(&(tok->isStringL));
+    init_lui16(&(tok->isStringL));
 }
 
 void freeToken(token *tok)
 {
     free_ls(tok->toks);
-    free_lsi32(&(tok->isStringL));
+    free_lui16(&(tok->isStringL));
 }
 
-token *tokenize(const char *string)
+token *tokenize(char *string)
 {
     token *tok;
     initToken(tok);
@@ -33,9 +33,30 @@ token *tokenize(const char *string)
     size_t tokNum = 0;
     char *wordStart = (char *)string;
 
+    int j = 0;
+    while (string[j] != '\0')
+    {
+        if (string[j] == '\\' && string[j + 1] == 'n')
+        {
+            string[j] = ' ';
+            string[j + 1] = '\n';
+        }
+        else if (string[j] == '\\' && string[j + 1] == 't')
+        {
+            string[j] = ' ';
+            string[j + 1] = '\t';
+        }
+        else if (string[j] == '\\' && string[j + 1] == 'b')
+        {
+            string[j] = ' ';
+            string[j + 1] = '\b';
+        }
+        j++;
+    }
+
     for (size_t i = 0; i <= strLen; i++)
     {
-        if (string[i] == ' ' || string[i] == '\t' || string[i] == '\0')
+        if (string[i] == ' ' || string[i] == '\t' || string[i] == ',' || string[i] == '.' || string[i] == ':' || string[i] == ',' || string[i] == '[' || string[i] == ']' || string[i] == '\0')
         {
             if (tokLen > 0)
             {
@@ -45,7 +66,7 @@ token *tokenize(const char *string)
                 push_ls(tok->toks, word);
                 tokLen = 0;
 
-                push_lsi32(&(tok->isStringL), 0);
+                push_lui16(&(tok->isStringL), 0);
             }
             wordStart = (char *)string + i + 1;
         }
@@ -59,11 +80,84 @@ token *tokenize(const char *string)
                 push_ls(tok->toks, word);
                 tokLen = 0;
 
-                push_lsi32(&(tok->isStringL), 0);
+                push_lui16(&(tok->isStringL), 0);
             }
             push_ls(tok->toks, "\n");
-            push_lsi32(&(tok->isStringL), 0);
+            push_lui16(&(tok->isStringL), 0);
             wordStart = (char *)string + i + 1;
+        }
+        else if (string[i] == '@')
+        {
+            if (tokLen > 0)
+            {
+                char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                strncpy(word, wordStart, tokLen);
+                word[tokLen] = '\0';
+                push_ls(tok->toks, word);
+                tokLen = 0;
+
+                push_lui16(&(tok->isStringL), 0);
+            }
+            push_ls(tok->toks, "@");
+            push_lui16(&(tok->isStringL), 0);
+            wordStart = (char *)string + i + 1;
+        }
+        else if (string[i] == '<')
+        {
+            push_ls(tok->toks, "arr");
+            push_lui16(&(tok->isStringL), 0);
+            i++;
+            wordStart = (char *)string + i;
+            while (string[i] != '>' && string[i] != '\0')
+            {
+                i++;
+                tokLen++;
+            }
+
+            char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+            strncpy(word, wordStart, tokLen);
+            word[tokLen] = '\0';
+            push_ls(tok->toks, word);
+            push_lui16(&(tok->isStringL), 0);
+            tokLen = 0;
+        }
+        else if (string[i] == '{')
+        {
+            push_ls(tok->toks, "eval");
+            push_lui16(&(tok->isStringL), 0);
+            i++;
+            wordStart = (char *)string + i;
+            while (string[i] != '}' && string[i] != '\0')
+            {
+                i++;
+                tokLen++;
+            }
+
+            char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+            strncpy(word, wordStart, tokLen);
+            word[tokLen] = '\0';
+            push_ls(tok->toks, word);
+            push_lui16(&(tok->isStringL), 0);
+            tokLen = 0;
+        }
+        else if (string[i] == '(')
+        {
+            push_ls(tok->toks, "cond");
+            push_lui16(&(tok->isStringL), 0);
+            i++;
+            wordStart = (char *)string + i;
+            while (string[i] != ')' && string[i] != '\0')
+            {
+                i++;
+                tokLen++;
+            }
+
+            char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+            strncpy(word, wordStart, tokLen);
+            word[tokLen] = '\0';
+            push_ls(tok->toks, word);
+            push_lui16(&(tok->isStringL), 0);
+            tokLen = 0;
         }
         else if (string[i] == '\'')
         {
@@ -81,7 +175,7 @@ token *tokenize(const char *string)
             push_ls(tok->toks, word);
             tokLen = 0;
 
-            push_lsi32(&(tok->isStringL), 1);
+            push_lui16(&(tok->isStringL), 1);
         }
         else if (string[i] == '\"')
         {
@@ -99,7 +193,7 @@ token *tokenize(const char *string)
             push_ls(tok->toks, word);
             tokLen = 0;
 
-            push_lsi32(&(tok->isStringL), 1);
+            push_lui16(&(tok->isStringL), 1);
         }
         else
         {
@@ -135,6 +229,11 @@ typedef struct
     int num;
     long loopStart;
 } line;
+
+size_t getLineSize(line *fline)
+{
+    return fline->ftoken->toks->size;
+}
 
 void initOffsets(line *line)
 {

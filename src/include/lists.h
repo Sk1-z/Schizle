@@ -10,16 +10,16 @@ typedef struct
     char **data;
     size_t size;
     size_t capacity;
-} list_s;
+} list_ls;
 
-void init_ls(list_s *list)
+void init_ls(list_ls *list)
 {
     list->data = (char **)malloc(0);
     list->size = 0;
     list->capacity = 0;
 }
 
-void free_ls(list_s *list)
+void free_ls(list_ls *list)
 {
     for (size_t i = 0; i < list->size; ++i)
     {
@@ -28,7 +28,7 @@ void free_ls(list_s *list)
     free(list->data);
 }
 
-void clear_ls(list_s *list)
+void clear_ls(list_ls *list)
 {
     for (size_t i = 0; i < list->size; ++i)
     {
@@ -38,7 +38,7 @@ void clear_ls(list_s *list)
     list->size = 0;
 }
 
-void push_ls(list_s *list, char *val)
+void push_ls(list_ls *list, char *val)
 {
     if (list->size == list->capacity)
     {
@@ -50,18 +50,23 @@ void push_ls(list_s *list, char *val)
     list->size++;
 }
 
-void cat_ls(list_s *list, size_t i, char *string)
+void cat_ls(list_ls *list, size_t i, char *string)
 {
     list->data[i] = (char *)realloc(list->data[i], (strlen(list->data[i]) + strlen(string) + 2) * sizeof(char));
     strcat(list->data[i], string);
 }
 
-char *get_ls(list_s *list, size_t i)
+char *get_ls(list_ls *list, size_t i)
 {
     return list->data[i];
 }
 
-size_t getIndex_ls(list_s *list, char *string)
+size_t getSize_ls(list_ls *list)
+{
+    return list->size;
+}
+
+size_t getIndex_ls(list_ls *list, char *string)
 {
     for (size_t i = 0; i < list->size; ++i)
     {
@@ -74,27 +79,27 @@ size_t getIndex_ls(list_s *list, char *string)
     // Name of the program
 }
 
-// signed i32 list
+// unsigned i16 list
 typedef struct
 {
-    int32_t *data;
+    uint16_t *data;
     size_t size;
     size_t capacity;
-} list_si32;
+} list_lui16;
 
-void init_lsi32(list_si32 *list)
+void init_lui16(list_lui16 *list)
 {
-    list->data = (int32_t *)malloc(0);
+    list->data = (uint16_t *)malloc(0);
     list->size = 0;
     list->capacity = 0;
 }
 
-void free_lsi32(list_si32 *list)
+void free_lui16(list_lui16 *list)
 {
     free(list->data);
 }
 
-void clear_lsi32(list_si32 *list)
+void clear_lui16(list_lui16 *list)
 {
     for (size_t i = 0; i < list->size; ++i)
     {
@@ -104,23 +109,23 @@ void clear_lsi32(list_si32 *list)
     list->size = 0;
 }
 
-void push_lsi32(list_si32 *list, int32_t val)
+void push_lui16(list_lui16 *list, uint16_t val)
 {
     if (list->size == list->capacity)
     {
         list->capacity = (size_t)((double)list->capacity * 1.5 + 1);
-        list->data = (int32_t *)realloc(list->data, list->capacity * sizeof(int32_t));
+        list->data = (uint16_t *)realloc(list->data, list->capacity * sizeof(uint16_t));
     }
     list->data[list->size] = val;
     list->size++;
 }
 
-void pushBool_lsi32(list_si32 *list, int val)
+void pushBool_lui16(list_lui16 *list, int val)
 {
     if (list->size == list->capacity)
     {
         list->capacity = (size_t)((double)list->capacity * 1.5 + 1);
-        list->data = (int32_t *)realloc(list->data, list->capacity * sizeof(int32_t));
+        list->data = (uint16_t *)realloc(list->data, list->capacity * sizeof(uint16_t));
     }
     if (val == 1)
     {
@@ -134,12 +139,267 @@ void pushBool_lsi32(list_si32 *list, int val)
     }
 }
 
-int32_t get_lsi32(list_si32 *list, size_t i)
+uint16_t get_lui16(list_lui16 *list, size_t i)
 {
     return list->data[i];
 }
 
-void set_lsi32(list_si32 *list, size_t i, int32_t val)
+void set_lui16(list_lui16 *list, size_t i, uint16_t val)
+{
+    list->data[i] = val;
+}
+
+// unsigned i64 list
+typedef struct
+{
+    uint64_t *data;
+    size_t size;
+    size_t capacity;
+} list_lui64;
+
+void init_lui64(list_lui64 *list)
+{
+    list->data = (uint64_t *)malloc(0);
+    list->size = 0;
+    list->capacity = 0;
+}
+
+void free_lui64(list_lui64 *list)
+{
+    free(list->data);
+}
+
+void clear_lui64(list_lui64 *list)
+{
+    for (size_t i = 0; i < list->size; ++i)
+    {
+        list->data[i] = 0;
+    }
+
+    list->size = 0;
+}
+
+void push_lui64(list_lui64 *list, uint64_t val)
+{
+    if (list->size == list->capacity)
+    {
+        list->capacity = (size_t)((double)list->capacity * 1.5 + 1);
+        list->data = (uint64_t *)realloc(list->data, list->capacity * sizeof(uint64_t));
+    }
+    list->data[list->size] = val;
+    list->size++;
+}
+
+uint64_t get_lui64(list_lui64 *list, size_t i)
+{
+    return list->data[i];
+}
+
+void set_lui64(list_lui64 *list, size_t i, uint64_t val)
+{
+    list->data[i] = val;
+}
+
+// signed i32 list
+typedef struct
+{
+    int32_t *data;
+    size_t size;
+    size_t capacity;
+} list_lsi32;
+
+void init_lsi32(list_lsi32 *list)
+{
+    list->data = (int32_t *)malloc(0);
+    list->size = 0;
+    list->capacity = 0;
+}
+
+void free_lsi32(list_lsi32 *list)
+{
+    free(list->data);
+}
+
+void clear_lsi32(list_lsi32 *list)
+{
+    for (size_t i = 0; i < list->size; ++i)
+    {
+        list->data[i] = 0;
+    }
+
+    list->size = 0;
+}
+
+void push_lsi32(list_lsi32 *list, int32_t val)
+{
+    if (list->size == list->capacity)
+    {
+        list->capacity = (size_t)((double)list->capacity * 1.5 + 1);
+        list->data = (int32_t *)realloc(list->data, list->capacity * sizeof(int32_t));
+    }
+    list->data[list->size] = val;
+    list->size++;
+}
+
+int32_t get_lsi32(list_lsi32 *list, size_t i)
+{
+    return list->data[i];
+}
+
+void set_lsi32(list_lsi32 *list, size_t i, int32_t val)
+{
+    list->data[i] = val;
+}
+
+// signed i64 list
+typedef struct
+{
+    int64_t *data;
+    size_t size;
+    size_t capacity;
+} list_lsi64;
+
+void init_lsi64(list_lsi64 *list)
+{
+    list->data = (int64_t *)malloc(0);
+    list->size = 0;
+    list->capacity = 0;
+}
+
+void free_lsi64(list_lsi64 *list)
+{
+    free(list->data);
+}
+
+void clear_lsi64(list_lsi64 *list)
+{
+    for (size_t i = 0; i < list->size; ++i)
+    {
+        list->data[i] = 0;
+    }
+
+    list->size = 0;
+}
+
+void push_lsi64(list_lsi64 *list, int64_t val)
+{
+    if (list->size == list->capacity)
+    {
+        list->capacity = (size_t)((double)list->capacity * 1.5 + 1);
+        list->data = (int64_t *)realloc(list->data, list->capacity * sizeof(int64_t));
+    }
+    list->data[list->size] = val;
+    list->size++;
+}
+
+int64_t get_lsi64(list_lsi64 *list, size_t i)
+{
+    return list->data[i];
+}
+
+void set_lsi64(list_lsi64 *list, size_t i, int64_t val)
+{
+    list->data[i] = val;
+}
+
+// float
+typedef struct
+{
+    float *data;
+    size_t size;
+    size_t capacity;
+} list_lf32;
+
+void init_lf32(list_lf32 *list)
+{
+    list->data = (float *)malloc(0);
+    list->size = 0;
+    list->capacity = 0;
+}
+
+void free_lf32(list_lf32 *list)
+{
+    free(list->data);
+}
+
+void clear_lf32(list_lf32 *list)
+{
+    for (size_t i = 0; i < list->size; ++i)
+    {
+        list->data[i] = 0;
+    }
+
+    list->size = 0;
+}
+
+void push_lf32(list_lf32 *list, float val)
+{
+    if (list->size == list->capacity)
+    {
+        list->capacity = (size_t)((double)list->capacity * 1.5 + 1);
+        list->data = (float *)realloc(list->data, list->capacity * sizeof(float));
+    }
+    list->data[list->size] = val;
+    list->size++;
+}
+
+float get_lf32(list_lf32 *list, size_t i)
+{
+    return list->data[i];
+}
+
+void set_lf32(list_lf32 *list, size_t i, float val)
+{
+    list->data[i] = val;
+}
+
+// double
+typedef struct
+{
+    double *data;
+    size_t size;
+    size_t capacity;
+} list_ld64;
+
+void init_ld64(list_ld64 *list)
+{
+    list->data = (double *)malloc(0);
+    list->size = 0;
+    list->capacity = 0;
+}
+
+void free_ld64(list_ld64 *list)
+{
+    free(list->data);
+}
+
+void clear_ld64(list_ld64 *list)
+{
+    for (size_t i = 0; i < list->size; ++i)
+    {
+        list->data[i] = 0;
+    }
+
+    list->size = 0;
+}
+
+void push_ld64(list_ld64 *list, double val)
+{
+    if (list->size == list->capacity)
+    {
+        list->capacity = (size_t)((double)list->capacity * 1.5 + 1);
+        list->data = (double *)realloc(list->data, list->capacity * sizeof(double));
+    }
+    list->data[list->size] = val;
+    list->size++;
+}
+
+double get_ld64(list_ld64 *list, size_t i)
+{
+    return list->data[i];
+}
+
+void set_ld64(list_ld64 *list, size_t i, double val)
 {
     list->data[i] = val;
 }

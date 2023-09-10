@@ -1,5 +1,5 @@
 #include "../../std/warnings.h"
 
-void throwW(int warningNum)
+void throwWarning(int warningNum)
 {
 }
