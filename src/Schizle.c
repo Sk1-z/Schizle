@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 
                             if (!strcmp(get_ls(fline.ftoken->toks, 1), "schizle_standard_library") || !strcmp(get_ls(fline.ftoken->toks, 1), "std_lib"))
                             {
-                                if (getLineSize(&fline) <= 2)
+                                if (getLineSize(&fline) <= 3)
                                 {
                                     push_ls(&(modules.moduleNames), get_ls(fline.ftoken->toks, 1));
                                     GET_STD(get_ls(fline.ftoken->toks, 1))

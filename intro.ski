@@ -1,4 +1,4 @@
-get "std lib" as std
+get "std_lib" as std
 end
 
 _ Hello world program
