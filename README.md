@@ -4,7 +4,8 @@
 
 ## About
 
-Schizle is an *In-progress* Lightweight scripting language with builtin support for compilation into executables written in 99% C with the objective of being simple and easy to learn. Schizle is currently very early in development and schizle is only avaible on windows and the interpreter can only be used within the same directory as the .ski file. In addition there is a lot of features lacking.
+Schizle is an *In-progress* Lightweight scripting language with builtin support for compilation into executables written in pure ANSI C with the objective of being simple ,easy to learn, and lightweight.
+Current release: 0.01
 <!--
 ## Getting started
 
@@ -13,27 +14,27 @@ Schizle is an *In-progress* Lightweight scripting language with builtin support 
 ## Helloworld.ski
 Create a file named firstprogram.ski and write the below into it
 ```
+get "std lib" as std
 _ Hello world program
 
-params _name
-pcall cmdl_out
-params " says hello world"
-pcall cmdl_out
+params "Hello world"
+call @std::cmdl_out
 ```
 Then run the following command with Schizle.exe in the same directory, or use the relative path.
 ```
-.\schizle.exe run firstprogram.ski hello_world
+.\schizle.exe run Helloworld.ski hello_world
 ```
 The output should be
 ```
 hello_world out:
 
-hello_world says hello world
+Hello world
 
 successfully freed memory
 interpreter exited hello_world with code: 0
 ```
-> In the futue the output will be much cleaner
+> In the futue the output will be cleaned up
+> As of right now errors and warning are not very informative, the program will only throw errors if it is called wrong, however the interpreter will only print ERROR_HERE or WARNING_HERE when it encounters an error or warning, respectively.
 <!--
 ## Documentation
 
