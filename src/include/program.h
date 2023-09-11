@@ -16,7 +16,10 @@
     printf("\nWARNING_HERE\n"); \
     continue;
 
-#define THROW_ERROR(arg) throwError(arg, argv, fline.num)
+#define THROW_ERROR(arg)              \
+    exitCode = arg;                   \
+    throwError(arg, argv, fline.num); \
+    goto exit;
 
 // --Debug--
 int pointNum = 1;

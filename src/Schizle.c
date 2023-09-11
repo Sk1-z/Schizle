@@ -11,15 +11,11 @@ int main(int argc, char *argv[])
     // Command line parsing
     if (argc == 1)
     {
-        exitCode = 2;
-        THROW_ERROR(exitCode);
-        goto exit;
+        THROW_ERROR(2);
     }
     else if (argc == 2)
     {
-        exitCode = 4;
-        THROW_ERROR(exitCode);
-        goto exit;
+        THROW_ERROR(4);
     }
     else if (argc == 3 || argc == 4)
     {
@@ -145,14 +141,6 @@ int main(int argc, char *argv[])
                         }
                         PRINTTYPEDB("declaration");
                     }
-                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "new[]"))
-                    {
-                        if (getLineSize(&fline) <= 1)
-                        {
-                            WARNING_HERE
-                        }
-                        PRINTTYPEDB("group declaration");
-                    }
                     else if (!strcmp(get_ls(fline.ftoken->toks, 0), "if"))
                     {
                         if (getLineSize(&fline) <= 1)
@@ -233,16 +221,25 @@ int main(int argc, char *argv[])
                             {
                                 ERROR_HERE
                             }
+
                             modIndex = getIndex_ls(&(modules.moduleNames), get_ls(fline.ftoken->toks, 2));
+
                             if (!modIndex)
                             {
                                 ERROR_HERE
                             }
+
                             switch (get_lui16(&(modules.moduleID), modIndex))
                             {
                             case 0:
                                 if (!strcmp(get_ls(fline.ftoken->toks, 3), "cmdl_out"))
                                 {
+
+                                    if (argBuf.size < get_sig(&(modules.modules_list[modIndex].functionSignatures), 0).numArgs)
+                                    {
+                                        ERROR_HERE
+                                    }
+
                                     if (get_lui16(&isStringArg, 0))
                                     {
                                         size_t loc[2] = {0, 0};
@@ -259,6 +256,7 @@ int main(int argc, char *argv[])
                                         {
                                             size_t *loc = getVarLookUp(&varTable, index);
                                             CMDL_OUT(loc, NULL)
+                                            free(loc);
                                         }
                                     }
                                 }
@@ -294,23 +292,17 @@ int main(int argc, char *argv[])
             }
             else
             {
-                exitCode = 5;
-                THROW_ERROR(exitCode);
-                goto exit;
+                THROW_ERROR(5);
             }
         }
         else
         {
-            exitCode = 3;
-            THROW_ERROR(exitCode);
-            goto exit;
+            THROW_ERROR(3);
         }
     }
     else if (argc > 4)
     {
-        exitCode = 1;
-        THROW_ERROR(exitCode);
-        goto exit;
+        THROW_ERROR(1);
     }
 
 exit:
