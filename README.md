@@ -14,11 +14,13 @@ Current release: 0.01
 ## Helloworld.ski
 Create a file named firstprogram.ski and write the below into it
 ```
-get "std lib" as std
 _ Hello world program
 
-params "Hello world"
-call @std::cmdl_out
+get "schizle standard library" as std
+end
+
+!["Hello world"]
+call @std::cli_out
 ```
 Then run the following command with Schizle.exe in the same directory, or use the relative path.
 ```
