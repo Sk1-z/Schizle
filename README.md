@@ -12,7 +12,7 @@ Current release: 0.01
 [Getting started](docs/NOTDONE.md)
 -->
 ## Helloworld.ski
-Create a file named firstprogram.ski and write the below into it
+Create a file named first_program.ski and write the below into it
 ```
 _ Hello world program
 
@@ -24,7 +24,7 @@ call @std::cli_out
 ```
 Then run the following command with Schizle.exe in the same directory, or use the relative path.
 ```
-.\schizle.exe run Helloworld.ski hello_world
+.\schizle.exe run first_program.ski hello_world
 ```
 The output should be
 ```
