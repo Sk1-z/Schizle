@@ -56,7 +56,7 @@ token *tokenize(char *string)
 
     for (size_t i = 0; i <= strLen; i++)
     {
-        if (string[i] == ' ' || string[i] == '\t' || string[i] == ',' || string[i] == '.' || string[i] == ':' || string[i] == ',' || string[i] == '[' || string[i] == ']' || string[i] == '\0')
+        if (string[i] == ' ' || string[i] == '\t' || string[i] == ',' || string[i] == '\0')
         {
             if (tokLen > 0)
             {
@@ -86,6 +86,70 @@ token *tokenize(char *string)
             push_lui16(&(tok->isStringL), 0);
             wordStart = (char *)string + i + 1;
         }
+        else if (string[i] == ':')
+        {
+            if (string[i + 1] == ':' && string[i - 1] != ':')
+            {
+                if (tokLen > 0)
+                {
+                    char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                    strncpy(word, wordStart, tokLen);
+                    word[tokLen] = '\0';
+                    push_ls(tok->toks, word);
+                    tokLen = 0;
+
+                    push_lui16(&(tok->isStringL), 0);
+                }
+                push_ls(tok->toks, "mFunc");
+                push_lui16(&(tok->isStringL), 0);
+                wordStart = (char *)string + i + 1;
+            }
+            else if (string[i + 1] != ':' && string[i - 1] != ':')
+            {
+            }
+        }
+        else if (string[i] == '!')
+        {
+            if (string[i + 1] == '[')
+            {
+                if (tokLen > 0)
+                {
+                    char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                    strncpy(word, wordStart, tokLen);
+                    word[tokLen] = '\0';
+                    push_ls(tok->toks, word);
+                    tokLen = 0;
+
+                    push_lui16(&(tok->isStringL), 0);
+                }
+                push_ls(tok->toks, "params");
+                push_lui16(&(tok->isStringL), 0);
+                wordStart = (char *)string + i + 1;
+            }
+            else if (string[i + 1] == '<')
+            {
+            }
+        }
+        else if (string[i] == '[' || string[i] == '<')
+        {
+        }
+        else if (string[i] == ']' || string[i] == '>')
+        {
+
+            if (tokLen > 0)
+            {
+                char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                strncpy(word, wordStart, tokLen);
+                word[tokLen] = '\0';
+                push_ls(tok->toks, word);
+                tokLen = 0;
+
+                push_lui16(&(tok->isStringL), 0);
+            }
+            push_ls(tok->toks, "end");
+            push_lui16(&(tok->isStringL), 0);
+            wordStart = (char *)string + i + 1;
+        }
         else if (string[i] == '@')
         {
             if (tokLen > 0)
@@ -101,25 +165,6 @@ token *tokenize(char *string)
             push_ls(tok->toks, "@");
             push_lui16(&(tok->isStringL), 0);
             wordStart = (char *)string + i + 1;
-        }
-        else if (string[i] == '<')
-        {
-            push_ls(tok->toks, "arr");
-            push_lui16(&(tok->isStringL), 0);
-            i++;
-            wordStart = (char *)string + i;
-            while (string[i] != '>' && string[i] != '\0')
-            {
-                i++;
-                tokLen++;
-            }
-
-            char *word = (char *)malloc((tokLen + 1) * sizeof(char));
-            strncpy(word, wordStart, tokLen);
-            word[tokLen] = '\0';
-            push_ls(tok->toks, word);
-            push_lui16(&(tok->isStringL), 0);
-            tokLen = 0;
         }
         else if (string[i] == '{')
         {

@@ -54,6 +54,7 @@ void pushTable(lookupT *table, size_t typeID, size_t index)
     table->size++;
 }
 
+// [0] = id [1] = index
 size_t *getVarLookUp(lookupT *table, size_t i)
 {
     // get variable's id and index by index in table of identifiers

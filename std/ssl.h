@@ -1,5 +1,26 @@
+#include "common.h"
+
+// module get statement
+#define GET_SSL(name)                                 \
+    push_ls(&(modules.moduleNames), name);            \
+    push_lui16(&(modules.moduleID), 0);               \
+                                                      \
+    struct module ssl;                                \
+    init_lsig(&(ssl.functionSignatures));             \
+    init_ls(&(ssl.functionNames));                    \
+                                                      \
+    struct functionSig cli_out_sig;                   \
+    init_sig(&cli_out_sig);                           \
+    cli_out_sig.numArgs = 1;                          \
+    push_lui16(&(cli_out_sig.argID), 0);              \
+    cli_out_sig.call = cli_out;                       \
+    push_sig(&(ssl.functionSignatures), cli_out_sig); \
+    push_ls(&(ssl.functionNames), "cli_out");         \
+                                                      \
+    push_module(&modules, &ssl);
+
 // prints to the command line
-#define CMDL_OUT(loc, arg)                 \
+#define CLI_OUT(loc, arg)                  \
     switch (loc[0])                        \
     {                                      \
     case 0:                                \
@@ -36,3 +57,28 @@
         printf(GET_TEXT(loc[1]));          \
         break;                             \
     }
+
+size_t cli_out()
+{
+    if (get_lui16(&isStringArg, 0))
+    {
+        size_t loc[2] = {0, 0};
+        CLI_OUT(loc, get_ls(&argBuf, 0))
+    }
+    else
+    {
+        size_t index = getIndex_ls(&varBuf, get_ls(&argBuf, 0));
+        if (!index)
+        {
+            return ERROR;
+        }
+        else
+        {
+            size_t *loc = getVarLookUp(&varTable, index);
+            CLI_OUT(loc, NULL)
+            free(loc);
+        }
+    }
+
+    return 0;
+}

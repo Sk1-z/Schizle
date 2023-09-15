@@ -1,7 +1,7 @@
-get "std_lib" as std
-end
-
 _ Hello world program
 
-params "hello world"
-call @std::cmdl_out
+get "schizle standard library" as std
+end
+
+!["Hello world"]
+call @std::cli_out

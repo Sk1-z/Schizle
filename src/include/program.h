@@ -54,6 +54,7 @@ int paramInit = 0;
 // Program list
 list_ls argBuf;
 list_lui16 isStringArg;
+list_lui16 typeArg;
 
 list_ls varBuf;
 lookupT varTable;
@@ -67,8 +68,7 @@ list_lf32 fracVal;
 list_ld64 frac64Val;
 list_ls textVal;
 // Member list
-struct module_list modules;
-size_t moduleNum;
+struct module_data modules;
 
 #define GET_STATE(index) get_lui16(&stateVal, index)
 #define GET_NAT(index) get_lui16(&natVal, index)
@@ -133,6 +133,7 @@ size_t moduleNum;
     initTable(&varTable);                    \
     init_ls(&argBuf);                        \
     init_lui16(&isStringArg);                \
+    init_lui16(&typeArg);                    \
     initOffsets(&fline);                     \
                                              \
     init_lui16(&stateVal);                   \
@@ -150,14 +151,21 @@ size_t moduleNum;
     push_ls(&textVal, PNAME);                \
                                              \
     init_ls(&(modules.moduleNames));         \
+    init_lui16(&(modules.moduleID));         \
+                                             \
     push_ls(&(modules.moduleNames), "main"); \
-    push_lui16(&(modules.moduleID), 0);
+    push_lui16(&(modules.moduleID), 0);      \
+    struct module main;                      \
+    init_ls(&(main.functionNames));          \
+    init_lsig(&(main.functionSignatures));   \
+    push_module(&(modules), 0);
 
 #define FREE_PROGRAM               \
     free_ls(&varBuf);              \
     freeTable(&varTable);          \
     free_ls(&argBuf);              \
     free_lui16(&isStringArg);      \
+    free_lui16(&typeArg);          \
     freeOffsets(&(fline.offsets)); \
                                    \
     free_lui16(&stateVal);         \
@@ -172,11 +180,3 @@ size_t moduleNum;
     freeModules(&modules);         \
                                    \
     printf("\n\nsuccessfully freed memory");
-
-#define GET_STD(name)                                                      \
-    push_ls(&(modules.moduleNames), name);                                 \
-    push_lui16(&(modules.moduleID), 0);                                    \
-    push_ls(&(modules.modules_list[moduleNum].functionNames), "cmdl_out"); \
-    init_sig(&(modules.modules_list->functionSignatures));                 \
-    struct functionSig cmdl_out = {1, (size_t *)malloc(sizeof(size_t))};   \
-    push_sig(&(modules.modules_list->functionSignatures), cmdl_out);
