@@ -3,7 +3,7 @@
 // module get statement
 #define GET_SSL(name)                                 \
     push_ls(&(modules.moduleNames), name);            \
-    push_lui16(&(modules.moduleID), 0);               \
+    push_lui16(&(modules.moduleID), 1);               \
                                                       \
     struct module ssl;                                \
     init_lsig(&(ssl.functionSignatures));             \
@@ -20,11 +20,11 @@
     push_module(&modules, &ssl);
 
 // prints to the command line
-#define CLI_OUT(loc, arg)                  \
+#define CLI_OUT(loc)                       \
     switch (loc[0])                        \
     {                                      \
     case 0:                                \
-        printf(arg);                       \
+        printf(get_ls(&argBuf, 0));        \
     case 1:                                \
         if (GET_STATE(loc[1]) == 1)        \
         {                                  \
@@ -60,10 +60,12 @@
 
 size_t cli_out()
 {
+    int warning = 0;
     if (get_lui16(&isStringArg, 0))
     {
+        printf("string");
         size_t loc[2] = {0, 0};
-        CLI_OUT(loc, get_ls(&argBuf, 0))
+        CLI_OUT(loc)
     }
     else
     {
@@ -74,11 +76,22 @@ size_t cli_out()
         }
         else
         {
+            if (!get_lui16(&varDef, index))
+            {
+                warning = WARNING;
+            }
             size_t *loc = getVarLookUp(&varTable, index);
-            CLI_OUT(loc, NULL)
+            CLI_OUT(loc)
             free(loc);
         }
     }
 
-    return 0;
+    if (warning)
+    {
+        return warning;
+    }
+    else
+    {
+        return 0;
+    }
 }

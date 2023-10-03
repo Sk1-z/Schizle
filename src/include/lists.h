@@ -61,6 +61,12 @@ char *get_ls(list_ls *list, size_t i)
     return list->data[i];
 }
 
+void set_ls(list_ls *list, size_t i, char *val)
+{
+    list->data[i] = (char *)realloc(list->data[i], ((strlen(val) + 1) * sizeof(char)));
+    strcpy(list->data[i], val);
+}
+
 size_t getSize_ls(list_ls *list)
 {
     return list->size;

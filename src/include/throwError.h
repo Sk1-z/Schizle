@@ -1,4 +1,4 @@
-#include "../../std/errors.h"
+#include "../../modules/errors.h"
 
 void throwError(int errorNum, char **argv, int lineNum)
 {

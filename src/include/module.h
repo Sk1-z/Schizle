@@ -100,7 +100,7 @@ void freeModules(struct module_data *list)
 {
     free_ls(&(list->moduleNames));
     free_lui16(&(list->moduleID));
-    for (int i = 1; i < list->size; i++)
+    for (int i = 0; i < list->size; ++i)
     {
         free_ls(&(list->data[i]->functionNames));
         free_lsig(&(list->data[i]->functionSignatures));

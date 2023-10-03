@@ -1,0 +1,1 @@
+premake5 --cc=clang --os=windows gmake

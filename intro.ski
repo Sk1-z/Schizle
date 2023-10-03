@@ -1,7 +1,8 @@
 _ Hello world program
-
 get "schizle standard library" as std
 end
 
-!["Hello world"]
+!Hello_world = "Hello world\n"
+
+![Hello_world]
 call @std::cli_out

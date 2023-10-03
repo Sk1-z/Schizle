@@ -21,8 +21,8 @@ ifeq ($(config),debug_windows)
     AR = ar
   endif
   TARGETDIR = bin/Debug
-  TARGET = $(TARGETDIR)/Schizle.exe
-  OBJDIR = obj/windows/Debug/Schizle
+  TARGET = $(TARGETDIR)/schizle_interpreter.exe
+  OBJDIR = obj/windows/Debug/schizle_interpreter
   DEFINES += -DDEBUG
   INCLUDES +=
   FORCE_INCLUDE +=
@@ -56,8 +56,8 @@ ifeq ($(config),debug_mac)
     AR = ar
   endif
   TARGETDIR = bin/Debug
-  TARGET = $(TARGETDIR)/Schizle
-  OBJDIR = obj/mac/Debug/Schizle
+  TARGET = $(TARGETDIR)/schizle_interpreter
+  OBJDIR = obj/mac/Debug/schizle_interpreter
   DEFINES += -DDEBUG
   INCLUDES +=
   FORCE_INCLUDE +=
@@ -91,8 +91,8 @@ ifeq ($(config),debug_linux)
     AR = ar
   endif
   TARGETDIR = bin/Debug
-  TARGET = $(TARGETDIR)/Schizle
-  OBJDIR = obj/linux/Debug/Schizle
+  TARGET = $(TARGETDIR)/schizle_interpreter
+  OBJDIR = obj/linux/Debug/schizle_interpreter
   DEFINES += -DDEBUG
   INCLUDES +=
   FORCE_INCLUDE +=
@@ -126,8 +126,8 @@ ifeq ($(config),release_windows)
     AR = ar
   endif
   TARGETDIR = bin/Release
-  TARGET = $(TARGETDIR)/Schizle.exe
-  OBJDIR = obj/windows/Release/Schizle
+  TARGET = $(TARGETDIR)/schizle_interpreter.exe
+  OBJDIR = obj/windows/Release/schizle_interpreter
   DEFINES += -DRELEASE
   INCLUDES +=
   FORCE_INCLUDE +=
@@ -161,8 +161,8 @@ ifeq ($(config),release_mac)
     AR = ar
   endif
   TARGETDIR = bin/Release
-  TARGET = $(TARGETDIR)/Schizle
-  OBJDIR = obj/mac/Release/Schizle
+  TARGET = $(TARGETDIR)/schizle_interpreter
+  OBJDIR = obj/mac/Release/schizle_interpreter
   DEFINES += -DRELEASE
   INCLUDES +=
   FORCE_INCLUDE +=
@@ -196,8 +196,8 @@ ifeq ($(config),release_linux)
     AR = ar
   endif
   TARGETDIR = bin/Release
-  TARGET = $(TARGETDIR)/Schizle
-  OBJDIR = obj/linux/Release/Schizle
+  TARGET = $(TARGETDIR)/schizle_interpreter
+  OBJDIR = obj/linux/Release/schizle_interpreter
   DEFINES += -DRELEASE
   INCLUDES +=
   FORCE_INCLUDE +=
@@ -221,7 +221,7 @@ all: prebuild prelink $(TARGET)
 endif
 
 OBJECTS := \
-	$(OBJDIR)/command.o \
+	$(OBJDIR)/Schizle.o \
 
 RESOURCES := \
 
@@ -233,7 +233,7 @@ ifeq (.exe,$(findstring .exe,$(ComSpec)))
 endif
 
 $(TARGET): $(GCH) ${CUSTOMFILES} $(OBJECTS) $(LDDEPS) $(RESOURCES) | $(TARGETDIR)
-	@echo Linking Schizle
+	@echo Linking schizle_interpreter
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
 
@@ -256,7 +256,7 @@ else
 endif
 
 clean:
-	@echo Cleaning Schizle
+	@echo Cleaning schizle_interpreter
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
 	$(SILENT) rm -rf $(OBJDIR)
@@ -280,7 +280,7 @@ else
 $(OBJECTS): | $(OBJDIR)
 endif
 
-$(OBJDIR)/command.o: src/command.c
+$(OBJDIR)/Schizle.o: src/Schizle.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 
