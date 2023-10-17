@@ -55,7 +55,6 @@ int main(int argc, char *argv[])
                 {
                     if (fgets(lineBuf, sizeof(lineBuf), ski) == NULL)
                     {
-                        printf("oopshie empty");
                         get = 0;
                         goto exit;
                     }
@@ -90,7 +89,7 @@ int main(int argc, char *argv[])
                                 }
                                 else
                                 {
-                                    if (strcmp(get_ls(fline.ftoken->toks, 2), "as"))
+                                    if (strcmp(get_ls(fline.ftoken->toks, 2), "KW_ALIAS"))
                                     {
                                         ERROR_HERE
                                     }
@@ -108,7 +107,7 @@ int main(int argc, char *argv[])
                     {
                         continue;
                     }
-                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "end"))
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_END"))
                     {
                         get = 0;
                     }
@@ -133,25 +132,196 @@ int main(int argc, char *argv[])
                         pushOffset(&(fline.offsets), ftell(ski));
                     }
 
+                    // printf("\nline %d:", fline.num);
+                    // for (size_t i = 0; i < getLineSize(&fline); i++)
+                    // {
+                    //     printf("%s ", get_ls(fline.ftoken->toks, i));
+                    // }
+
                     fline.num++;
                 get_skip:
 
-                    if (!strcmp(get_ls(fline.ftoken->toks, 0), "end"))
+                    if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_END"))
                     {
-                        if (expState)
+                        if (falseExp && controlNest == 1)
                         {
-                            expState--;
+                            falseExp = 0;
+                        }
+
+                        if (controlNest)
+                        {
+                            controlNest--;
                         }
                         else
                         {
                             WARNING_HERE
                         }
+
+                        PRINTTYPEDB("END");
+                    }
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_IF"))
+                    {
+                        controlNest++;
+
+                        if (falseExp)
+                        {
+                            goto skip;
+                        }
+
+                        size_t condCode;
+
+                        if (getLineSize(&fline) == 3)
+                        {
+                            if (strcmp(get_ls(fline.ftoken->toks, 1), "KW_COND_BLOCK"))
+                            {
+                                ERROR_HERE
+                            }
+
+                            if (cond(&condCode, get_ls(fline.ftoken->toks, 2)))
+                            {
+                                controlDone = 1;
+                            }
+                            else
+                            {
+                                falseExp = 1;
+                                falseExpNest = controlNest;
+                            }
+
+                            if (condCode)
+                            {
+                                ERROR_HERE
+                            }
+                        }
+                        else if (getLineSize(&fline) == 2)
+                        {
+                            if (cond(&condCode, get_ls(fline.ftoken->toks, 1)))
+                            {
+                                controlDone = 1;
+                            }
+                            else
+                            {
+                                falseExp = 1;
+                                falseExpNest = controlNest;
+                            }
+
+                            if (condCode)
+                            {
+                                ERROR_HERE
+                            }
+                        }
+                        else
+                        {
+                            ERROR_HERE
+                        }
+
+                        PRINTTYPEDB("control if");
+                    }
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_ELIF"))
+                    {
+                        if (!controlNest)
+                        {
+                            ERROR_HERE
+                        }
+                        else if (falseExp && falseExpNest != controlNest && !controlDone)
+                        {
+                            goto skip;
+                        }
+                        else if (falseExp && falseExpNest == controlNest && !controlDone)
+                        {
+                            size_t condCode;
+
+                            if (getLineSize(&fline) == 3)
+                            {
+                                if (strcmp(get_ls(fline.ftoken->toks, 1), "KW_COND_BLOCK"))
+                                {
+                                    ERROR_HERE
+                                }
+
+                                if (cond(&condCode, get_ls(fline.ftoken->toks, 2)))
+                                {
+                                    controlDone = 1;
+                                    falseExp = 0;
+                                }
+                                else
+                                {
+                                    falseExp = 1;
+                                    falseExpNest = controlNest;
+                                }
+
+                                if (condCode)
+                                {
+                                    ERROR_HERE
+                                }
+                            }
+                            else if (getLineSize(&fline) == 2)
+                            {
+                                if (cond(&condCode, get_ls(fline.ftoken->toks, 1)))
+                                {
+                                    controlDone = 1;
+                                    falseExp = 0;
+                                }
+                                else
+                                {
+                                    falseExp = 1;
+                                    falseExpNest = controlNest;
+                                }
+
+                                if (condCode)
+                                {
+                                    ERROR_HERE
+                                }
+                            }
+                            else
+                            {
+                                ERROR_HERE
+                            }
+                        }
+                        else if (controlDone)
+                        {
+                            falseExp = 1;
+                        }
+
+                        PRINTTYPEDB("control elseif");
+                    }
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_ELSE"))
+                    {
+                        if (!controlNest)
+                        {
+                            ERROR_HERE
+                        }
+                        else if (falseExp && falseExpNest != controlNest && !controlDone)
+                        {
+                            goto skip;
+                        }
+                        else if (falseExp && falseExpNest == controlNest && !controlDone)
+                        {
+                            falseExp = 0;
+                        }
+                        else if (controlDone)
+                        {
+                            falseExp = 1;
+                        }
+
+                        PRINTTYPEDB("control else");
+                    }
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_LOOP"))
+                    {
+                        if (falseExp)
+                        {
+                            goto skip;
+                        }
+
+                        PRINTTYPEDB("loop");
                     }
                     else if (!strcmp(get_ls(fline.ftoken->toks, 0), "\n"))
                     {
                     }
                     else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_MUT") || !strcmp(get_ls(fline.ftoken->toks, 0), "KW_IMMUT"))
                     {
+                        if (falseExp)
+                        {
+                            goto skip;
+                        }
 
                         PRINTTYPEDB("declaration");
 
@@ -324,7 +494,7 @@ int main(int argc, char *argv[])
                                 }
                             }
                         }
-                        else if (getLineSize(&fline) == 4)
+                        else if (getLineSize(&fline) == 4 || getLineSize(&fline) == 5)
                         {
                             if (autoType(1))
                             {
@@ -341,21 +511,66 @@ int main(int argc, char *argv[])
                                 }
                                 else
                                 {
-                                    size_t t = autoType(3);
-                                    if (t)
+                                    if (getLineSize(&fline) == 5)
                                     {
-                                        char *c;
-                                        NEW_VALUE(t, get_ls(fline.ftoken->toks, 1), get_ls(fline.ftoken->toks, 3), c)
+                                        if (!strcmp(get_ls(fline.ftoken->toks, 3), "KW_EVAL_BLOCK"))
+                                        {
+                                            int dbl = 0;
+                                            for (size_t i = 0; i < strlen(get_ls(fline.ftoken->toks, 3)); i++)
+                                            {
+                                                if (get_ls(fline.ftoken->toks, 3)[i] == '.')
+                                                {
+                                                    dbl = 1;
+                                                    break;
+                                                }
+                                            }
+
+                                            size_t evalCode;
+                                            char *c;
+
+                                            if (dbl)
+                                            {
+                                                char fmt[310];
+                                                sprintf(fmt, "%lf", eval_dbl(&evalCode, get_ls(fline.ftoken->toks, 3)));
+                                                NEW_VALUE(7, get_ls(fline.ftoken->toks, 1), fmt, c);
+                                            }
+                                            else
+                                            {
+                                                char fmt[19];
+                                                sprintf(fmt, "%lld", eval_ll(&evalCode, get_ls(fline.ftoken->toks, 3)));
+                                                NEW_VALUE(5, get_ls(fline.ftoken->toks, 1), fmt, c);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ERROR_HERE
+                                        }
                                     }
                                     else
                                     {
-                                        size_t index = getIndex_ls(&varBuf, get_ls(fline.ftoken->toks, 3));
-
-                                        if (index)
+                                        if (strcmp(get_ls(fline.ftoken->toks, 3), "KW_EVAL_BLOCK"))
                                         {
-                                            size_t *loc = getVarLookUp(&varTable, index);
-                                            NEW_VALUE_FROM_OLD(loc, get_ls(fline.ftoken->toks, 1));
-                                            free(loc);
+                                            size_t t = autoType(3);
+                                            if (t)
+                                            {
+                                                char *c;
+                                                NEW_VALUE(t, get_ls(fline.ftoken->toks, 1), get_ls(fline.ftoken->toks, 3), c)
+                                            }
+                                            else
+                                            {
+                                                size_t index = getIndex_ls(&varBuf, get_ls(fline.ftoken->toks, 3));
+
+                                                if (index)
+                                                {
+                                                    size_t *loc = getVarLookUp(&varTable, index);
+                                                    NEW_VALUE_FROM_OLD(loc, get_ls(fline.ftoken->toks, 1));
+                                                    free(loc);
+                                                }
+                                                else
+                                                {
+                                                    ERROR_HERE
+                                                }
+                                            }
                                         }
                                         else
                                         {
@@ -418,24 +633,13 @@ int main(int argc, char *argv[])
                             ERROR_HERE
                         }
                     }
-                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "if"))
-                    {
-                        PRINTTYPEDB("if");
-                    }
-                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "elseif"))
-                    {
-                        PRINTTYPEDB("elseif");
-                    }
-                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "else"))
-                    {
-                        PRINTTYPEDB("else");
-                    }
-                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "dur"))
-                    {
-                        PRINTTYPEDB("loop");
-                    }
                     else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_PARAMS"))
                     {
+                        if (falseExp)
+                        {
+                            goto skip;
+                        }
+
                         if (paramInit)
                         {
                             WARNING_HERE
@@ -453,7 +657,7 @@ int main(int argc, char *argv[])
                         clear_lui16(&typeArg);
 
                         size_t i = 1;
-                        while (strcmp(get_ls(fline.ftoken->toks, i), "end"))
+                        while (strcmp(get_ls(fline.ftoken->toks, i), "KW_END"))
                         {
                             if (strcmp(get_ls(fline.ftoken->toks, i), "\n"))
                             {
@@ -492,8 +696,13 @@ int main(int argc, char *argv[])
 
                         paramInit = 1;
                     }
-                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "call"))
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_CALL"))
                     {
+                        if (falseExp)
+                        {
+                            goto skip;
+                        }
+
                         PRINTTYPEDB("function call");
 
                         if (getLineSize(&fline) < 2)
@@ -526,7 +735,7 @@ int main(int argc, char *argv[])
                                 }
                                 else
                                 {
-                                    if (strcmp(get_ls(fline.ftoken->toks, 4), get_ls(&(module->functionNames), 0)))
+                                    if (!strcmp(get_ls(fline.ftoken->toks, 4), get_ls(&(module->functionNames), 0)))
                                     {
                                         struct functionSig sig = get_sig(&(module->functionSignatures), 0);
 
@@ -547,6 +756,7 @@ int main(int argc, char *argv[])
                                     }
                                     else
                                     {
+                                        ERROR_HERE
                                     }
                                 }
                             }
@@ -565,6 +775,11 @@ int main(int argc, char *argv[])
                         int index = getIndex_ls(&varBuf, get_ls(fline.ftoken->toks, 0));
                         if (index)
                         {
+                            if (falseExp)
+                            {
+                                goto skip;
+                            }
+
                             PRINTTYPEDB("redeclaration");
 
                             if (!strcmp(get_ls(fline.ftoken->toks, 1), "KW_EQ"))
@@ -946,10 +1161,14 @@ int main(int argc, char *argv[])
                             ERROR_HERE
                         }
                     }
-
+                skip:
                     freeToken(fline.ftoken);
                 }
 
+                if (controlNest)
+                {
+                    ERROR_HERE
+                }
                 // printf("%d", fline.num);
 
                 fclose(ski);

@@ -18,7 +18,7 @@
     goto exit;
 #define WARNING_HERE            \
     printf("\nWARNING_HERE\n"); \
-    continue;
+    goto skip;
 
 #define THROW_ERROR(arg)              \
     exitCode = arg;                   \
@@ -40,9 +40,11 @@ int intepreterState = 1;
 int program = 0;
 int get = 1;
 
-int expState = 1;
-int falseExp = 0;
+int controlNest = 0;
+int controlDone = 0;
 int loopExp = 0;
+int falseExp = 0;
+int falseExpNest = 0;
 int paramInit = 0;
 // Program list
 list_ls argBuf;
@@ -122,7 +124,7 @@ size_t autoType(size_t i)
     {
         return 8;
     }
-    else if (strcmp(str, "on") && strcmp(str, "off"))
+    else if (strcmp(str, "KW_ON") && strcmp(str, "KW_OFF"))
     {
         return autoNumericalType(str);
     }
@@ -168,11 +170,11 @@ size_t autoType(size_t i)
     case 1:                                                      \
         pushTable(&varTable, 1, stateVal.size);                  \
         push_ls(&varBuf, name);                                  \
-        if (!strcmp(value, "on"))                                \
+        if (!strcmp(value, "KW_ON"))                             \
         {                                                        \
             push_lui16(&stateVal, TRUE);                         \
         }                                                        \
-        else if (!strcmp(value, "off"))                          \
+        else if (!strcmp(value, "KW_OFF"))                       \
         {                                                        \
             push_lui16(&stateVal, FALSE);                        \
         }                                                        \
@@ -244,11 +246,11 @@ size_t autoType(size_t i)
     case 1:                                           \
         if (GET_STATE(loc[1]))                        \
         {                                             \
-            strcpy(value, "on");                      \
+            strcpy(value, "KW_ON");                   \
         }                                             \
         else                                          \
         {                                             \
-            strcpy(value, "off");                     \
+            strcpy(value, "KW_OFF");                  \
         }                                             \
         NEW_VALUE(loc[0], name, value, c)             \
         break;                                        \

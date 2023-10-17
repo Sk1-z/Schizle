@@ -74,7 +74,7 @@ token *tokenize(char *string)
             }
             else if (string[i] == ':')
             {
-                if (string[i + 1] == ':' && string[i - 1] != ':')
+                if (string[i + 1] == ':')
                 {
                     if (tokLen > 0)
                     {
@@ -88,9 +88,10 @@ token *tokenize(char *string)
                     }
                     push_ls(tok->toks, "KW_MEMBER");
                     push_lui16(&(tok->isStringL), 0);
-                    wordStart = (char *)string + i + 1;
+                    wordStart = (char *)string + i + 2;
+                    i++;
                 }
-                else if (string[i + 1] != ':' && string[i - 1] != ':')
+                else
                 {
                     if (tokLen > 0)
                     {
@@ -123,7 +124,8 @@ token *tokenize(char *string)
                     }
                     push_ls(tok->toks, "KW_PARAMS");
                     push_lui16(&(tok->isStringL), 0);
-                    wordStart = (char *)string + i + 1;
+                    wordStart = (char *)string + i + 2;
+                    i++;
                 }
                 else if (string[i + 1] == '<')
                 {
@@ -142,9 +144,10 @@ token *tokenize(char *string)
                     }
                     push_ls(tok->toks, "KW_IMMUT");
                     push_lui16(&(tok->isStringL), 0);
-                    wordStart = (char *)string + i + 1;
+                    wordStart = (char *)string + i + 2;
+                    i++;
                 }
-                else if (string[i - 1] != '!')
+                else
                 {
                     if (tokLen > 0)
                     {
@@ -158,13 +161,6 @@ token *tokenize(char *string)
                     }
                     push_ls(tok->toks, "KW_MUT");
                     push_lui16(&(tok->isStringL), 0);
-                    wordStart = (char *)string + i + 1;
-                }
-            }
-            else if (string[i] == '[' || string[i] == '<')
-            {
-                if (string[i - 1] == '!')
-                {
                     wordStart = (char *)string + i + 1;
                 }
             }
@@ -243,6 +239,14 @@ token *tokenize(char *string)
                 //     printf("%c", *(wordStart + j));
                 //     j++;
                 // }
+                if (tokLen > 0)
+                {
+                    char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                    strncpy(word, wordStart, tokLen);
+                    word[tokLen] = '\0';
+                    push_ls(tok->toks, word);
+                    tokLen = 0;
+                }
 
                 push_ls(tok->toks, "KW_EVAL_BLOCK");
                 push_lui16(&(tok->isStringL), 0);
@@ -280,14 +284,40 @@ token *tokenize(char *string)
             }
             else if (string[i] == '(')
             {
+                if (tokLen > 0)
+                {
+                    char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                    strncpy(word, wordStart, tokLen);
+                    word[tokLen] = '\0';
+                    push_ls(tok->toks, word);
+                    tokLen = 0;
+                }
+
                 push_ls(tok->toks, "KW_COND_BLOCK");
                 push_lui16(&(tok->isStringL), 0);
-                i++;
-                wordStart = (char *)string + i;
-                while (string[i] != ')' && string[i] != '\0')
+
+                wordStart = (char *)string + i + 1;
+
+                size_t nest = 1;
+                tokLen--;
+
+                while (nest)
                 {
                     i++;
                     tokLen++;
+
+                    if (string[i] == '\0')
+                    {
+                        break;
+                    }
+                    else if (string[i] == '(')
+                    {
+                        nest++;
+                    }
+                    else if (string[i] == ')')
+                    {
+                        nest--;
+                    }
                 }
 
                 char *word = (char *)malloc((tokLen + 1) * sizeof(char));
@@ -369,6 +399,46 @@ token *tokenize(char *string)
             {
                 tokLen++;
             }
+        }
+    }
+
+    for (size_t i = 0; i < tok->toks->size; i++)
+    {
+        if (!strcmp(get_ls(tok->toks, i), "end"))
+        {
+            set_ls(tok->toks, i, "KW_END");
+        }
+        else if (!strcmp(get_ls(tok->toks, i), "as"))
+        {
+            set_ls(tok->toks, i, "KW_ALIAS");
+        }
+        else if (!strcmp(get_ls(tok->toks, i), "if"))
+        {
+            set_ls(tok->toks, i, "KW_IF");
+        }
+        else if (!strcmp(get_ls(tok->toks, i), "elseif"))
+        {
+            set_ls(tok->toks, i, "KW_ELIF");
+        }
+        else if (!strcmp(get_ls(tok->toks, i), "else"))
+        {
+            set_ls(tok->toks, i, "KW_ELSE");
+        }
+        else if (!strcmp(get_ls(tok->toks, i), "dur"))
+        {
+            set_ls(tok->toks, i, "KW_LOOP");
+        }
+        else if (!strcmp(get_ls(tok->toks, i), "call"))
+        {
+            set_ls(tok->toks, i, "KW_CALL");
+        }
+        else if (!strcmp(get_ls(tok->toks, i), "on"))
+        {
+            set_ls(tok->toks, i, "KW_ON");
+        }
+        else if (!strcmp(get_ls(tok->toks, i), "off"))
+        {
+            set_ls(tok->toks, i, "KW_OFF");
         }
     }
 

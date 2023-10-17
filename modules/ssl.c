@@ -63,7 +63,6 @@ size_t cli_out()
     int warning = 0;
     if (get_lui16(&isStringArg, 0))
     {
-        printf("string");
         size_t loc[2] = {0, 0};
         CLI_OUT(loc)
     }

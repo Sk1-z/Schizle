@@ -2,7 +2,12 @@ _ Hello world program
 get "schizle standard library" as std
 end
 
-!Hello_world = "Hello world\n"
+!happy = 1
 
-![Hello_world]
-call @std::cli_out
+if (!happy)
+    !["You are happy:)"]
+    call @std::cli_out
+else
+    !["You are not happy:("]
+    call @std::cli_out
+end
