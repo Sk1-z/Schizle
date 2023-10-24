@@ -428,6 +428,10 @@ token *tokenize(char *string)
         {
             set_ls(tok->toks, i, "KW_LOOP");
         }
+        else if (!strcmp(get_ls(tok->toks, i), "break"))
+        {
+            set_ls(tok->toks, i, "KW_BREAK");
+        }
         else if (!strcmp(get_ls(tok->toks, i), "call"))
         {
             set_ls(tok->toks, i, "KW_CALL");
@@ -440,6 +444,11 @@ token *tokenize(char *string)
         {
             set_ls(tok->toks, i, "KW_OFF");
         }
+    }
+
+    if (tok->toks->size == 0)
+    {
+        push_ls(tok->toks, "\n");
     }
 
     return tok;
@@ -483,6 +492,11 @@ void initOffsets(line *line)
     list->capacity = 1;
     list->offset = (long *)malloc(sizeof(long));
     pushOffset(list, 0);
+}
+
+long get_offset(line *line, size_t i)
+{
+    return line->offsets.offset[i];
 }
 
 void freeOffsets(list_byteOffset *list)

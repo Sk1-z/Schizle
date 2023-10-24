@@ -102,7 +102,7 @@ list_ls *tokenizeEval(char *expr)
             push_ls(expr_ls, block);
             tokLen = 0;
         }
-        else if (expr[i] == '!')
+        else if (expr[i] == '$')
         {
             if (tokLen > 0)
             {
@@ -842,7 +842,7 @@ list_ls *tokenizeCond(char *expr)
             push_ls(expr_ls, block);
             tokLen = 0;
         }
-        else if (expr[i] == '!')
+        else if (expr[i] == '$')
         {
             if (tokLen > 0)
             {
@@ -857,33 +857,33 @@ list_ls *tokenizeCond(char *expr)
         }
         else if (expr[i] == '~')
         {
-            if (expr[i + 1] == '=')
+            // if (expr[i + 1] == '=')
+            // {
+            //     if (tokLen > 0)
+            //     {
+            //         char *val = (char *)malloc((tokLen + 1) * sizeof(char));
+            //         strncpy(val, start, tokLen);
+            //         val[tokLen] = '\0';
+            //         push_ls(expr_ls, val);
+            //         tokLen = 0;
+            //     }
+            //     push_ls(expr_ls, "KW_NEGEQ");
+            //     start = expr + i + 2;
+            //     i++;
+            // }
+            // else
+            // {
+            if (tokLen > 0)
             {
-                if (tokLen > 0)
-                {
-                    char *val = (char *)malloc((tokLen + 1) * sizeof(char));
-                    strncpy(val, start, tokLen);
-                    val[tokLen] = '\0';
-                    push_ls(expr_ls, val);
-                    tokLen = 0;
-                }
-                push_ls(expr_ls, "KW_NEGEQ");
-                start = expr + i + 2;
-                i++;
+                char *val = (char *)malloc((tokLen + 1) * sizeof(char));
+                strncpy(val, start, tokLen);
+                val[tokLen] = '\0';
+                push_ls(expr_ls, val);
+                tokLen = 0;
             }
-            else
-            {
-                if (tokLen > 0)
-                {
-                    char *val = (char *)malloc((tokLen + 1) * sizeof(char));
-                    strncpy(val, start, tokLen);
-                    val[tokLen] = '\0';
-                    push_ls(expr_ls, val);
-                    tokLen = 0;
-                }
-                push_ls(expr_ls, "KW_NEG");
-                start = expr + i + 1;
-            }
+            push_ls(expr_ls, "KW_NEG");
+            start = expr + i + 1;
+            // }
         }
         else if (expr[i] == '/' && expr[i + 1] == '\\')
         {
@@ -1220,47 +1220,47 @@ int cond(size_t *exitCode, char *expr)
         }
     }
 
-    while (negEq)
-    {
-        negEq = 0;
+    // while (negEq)
+    // {
+    //     negEq = 0;
 
-        for (size_t i = 0; i < expr_ls->size; i++)
-        {
-            if (!strcmp(get_ls(expr_ls, i), "KW_NEGEQ"))
-            {
-                negEq = 1;
+    //     for (size_t i = 0; i < expr_ls->size; i++)
+    //     {
+    //         if (!strcmp(get_ls(expr_ls, i), "KW_NEGEQ"))
+    //         {
+    //             negEq = 1;
 
-                if (i + 1 == expr_ls->size)
-                {
-                    *exitCode = 1;
-                    return 0;
-                }
+    //             if (i + 1 == expr_ls->size)
+    //             {
+    //                 *exitCode = 1;
+    //                 return 0;
+    //             }
 
-                long long a = strtoll(get_ls(expr_ls, i - 1), &end, 10);
-                long long b = strtoll(get_ls(expr_ls, i + 1), &end, 10);
+    //             long long a = strtoll(get_ls(expr_ls, i - 1), &end, 10);
+    //             long long b = strtoll(get_ls(expr_ls, i + 1), &end, 10);
 
-                if (*end != '\0')
-                {
-                    *exitCode = 1;
-                    return 0;
-                }
+    //             if (*end != '\0')
+    //             {
+    //                 *exitCode = 1;
+    //                 return 0;
+    //             }
 
-                set_ls(expr_ls, i - 1, EMPTY);
-                set_ls(expr_ls, i + 1, EMPTY);
+    //             set_ls(expr_ls, i - 1, EMPTY);
+    //             set_ls(expr_ls, i + 1, EMPTY);
 
-                if (a != b)
-                {
-                    set_ls(expr_ls, i, "KW_ON");
-                }
-                else
-                {
-                    set_ls(expr_ls, i, "KW_OFF");
-                }
+    //             if (a != b)
+    //             {
+    //                 set_ls(expr_ls, i, "KW_ON");
+    //             }
+    //             else
+    //             {
+    //                 set_ls(expr_ls, i, "KW_OFF");
+    //             }
 
-                expr_ls = shrinkExp(expr_ls);
-            }
-        }
-    }
+    //             expr_ls = shrinkExp(expr_ls);
+    //         }
+    //     }
+    // }
 
     while (greatEq)
     {
@@ -1571,7 +1571,7 @@ int cond(size_t *exitCode, char *expr)
 
     // for (size_t i = 0; i < expr_ls->size; i++)
     // {
-    //     printf("%s\n", get_ls(expr_ls, i));
+    //     printf("\n%s", get_ls(expr_ls, i));
     // }
     // printf("\n");
 

@@ -1,3 +1,5 @@
+int pointNum = 1;
+
 #ifdef DEBUG
 #define PRINTTYPEDB(str) printf("\n%s\n", str)
 #define PRINT_POINT                   \
@@ -62,6 +64,7 @@ int main(int argc, char *argv[])
                     fline.ftoken = tokenize(lineBuf);
                     pushOffset(&(fline.offsets), ftell(ski));
                     fline.num++;
+                    offset = fline.num;
 
                     if (!strcmp(get_ls(fline.ftoken->toks, 0), "get"))
                     {
@@ -127,10 +130,15 @@ int main(int argc, char *argv[])
                     }
 
                     fline.ftoken = tokenize(lineBuf);
-                    if (!loopExp)
+                    if (offset == fline.num)
                     {
                         pushOffset(&(fline.offsets), ftell(ski));
+                        offset++;
+                        // printf("\nOFFSET %d", offset);
                     }
+                    fline.num++;
+
+                get_skip:
 
                     // printf("\nline %d:", fline.num);
                     // for (size_t i = 0; i < getLineSize(&fline); i++)
@@ -138,30 +146,200 @@ int main(int argc, char *argv[])
                     //     printf("%s ", get_ls(fline.ftoken->toks, i));
                     // }
 
-                    fline.num++;
-                get_skip:
-
-                    if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_END"))
+                    if (!strcmp(get_ls(fline.ftoken->toks, 0), "exit"))
                     {
-                        if (falseExp && controlNest == 1)
+                        if (falseExp)
                         {
-                            falseExp = 0;
+                            goto skip;
                         }
-
-                        if (controlNest)
+                        else
                         {
-                            controlNest--;
+                            freeToken(fline.ftoken);
+                            goto exit;
+                        }
+                    }
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_END"))
+                    {
+                        if (nest)
+                        {
+                            // printf("\nec: %d loop %d nest: %d lnest: %d f: %d\n", expC, loopNum, nest, loopNest, falseExp);
+                            if (nest == 1)
+                            {
+                                if (get_lui16(&isLoop, nest - 1))
+                                {
+                                    if (!falseLoop && !falseExp)
+                                    {
+                                        fseek(ski, get_lsi32(&loopOffsets, loopNest - 1), SEEK_SET);
+                                        fline.num = get_lsi32(&loopLineNum, loopNest - 1) - 1;
+                                        loopNum++;
+                                        fLoop = 1;
+                                    }
+                                    else
+                                    {
+                                        loopNum = 0;
+                                        fLoop = 0;
+                                        falseExp = 0;
+                                        falseLoop = 0;
+                                        loopNest = 0;
+                                        currentLoopNest = 0;
+
+                                        clear_lsi32(&loopOffsets);
+                                        clear_lsi32(&loopLineNum);
+                                        clear_lui16(&isLoop);
+
+                                        expC = 0;
+                                    }
+                                }
+                                else
+                                {
+                                    if (falseIfExp)
+                                    {
+                                        falseExp = 0;
+                                        falseIf = 0;
+                                    }
+                                    controlDone = 0;
+
+                                    clear_lsi32(&loopOffsets);
+                                    clear_lsi32(&loopLineNum);
+                                    clear_lui16(&isLoop);
+
+                                    expC = 0;
+
+                                    if (currentLoopNest)
+                                    {
+                                        currentLoopNest = 0;
+                                    }
+                                }
+                            }
+                            else if (get_lui16(&isLoop, nest - 1))
+                            {
+                                // printf("END WHILE\n");
+                                if (!falseLoop && !falseExp)
+                                {
+                                    fseek(ski, get_lsi32(&loopOffsets, loopNest - 1), SEEK_SET);
+                                    fline.num = get_lsi32(&loopLineNum, loopNest - 1) - 1;
+                                    loopNum++;
+                                }
+                                else
+                                {
+                                    if (falseLoopExp == nest)
+                                    {
+                                        falseExp = 0;
+                                        falseLoop = 0;
+                                        loopNum = 0;
+                                        loopNest--;
+                                    }
+                                    else if (brokeLoop == loopNest && brokeLoop)
+                                    {
+                                        falseExp = 0;
+                                        falseLoop = 0;
+                                        brokeLoop = 0;
+                                        loopNum = 0;
+                                        loopNest--;
+                                    }
+                                }
+                            }
+                            else if (!get_lui16(&isLoop, nest - 1))
+                            {
+                                // printf("END IF\n");
+                                if (falseIfExp == nest)
+                                {
+                                    falseExp = 0;
+                                    falseIf = 0;
+                                }
+                            }
+
+                            nest--;
                         }
                         else
                         {
                             WARNING_HERE
                         }
 
-                        PRINTTYPEDB("END");
+                        // if (falseExp && controlNest == 1)
+                        // {
+                        //     falseExp = 0;
+                        // }
+
+                        // if (controlNest)
+                        // {
+                        //     controlNest--;
+                        // }
+                        // else
+                        // {
+                        //     WARNING_HERE
+                        // }
+
+                        // if (falseExp && controlNest)
+                        // {
+                        //     PRINTTYPEDB("end case 1");
+                        //     controlNest--;
+                        //     if (!brokeLoop && !falseLoop)
+                        //     {
+                        //         falseExp = 0;
+                        //     }
+                        //     falseIf = 0;
+                        // }
+                        // else if (!falseIf && controlDone && !loopNest)
+                        // {
+                        //     PRINTTYPEDB("end case 1.5");
+                        //     controlDone = 0;
+                        //     controlNest--;
+                        // }
+                        // else if (falseExpNest == controlNest)
+                        // {
+                        //     PRINTTYPEDB("end case 2");
+                        //     controlNest--;
+                        // }
+                        // else if (!falseExp && loopNest)
+                        // {
+                        //     PRINTTYPEDB("end case 3");
+                        //     fseek(ski, get_lsi32(&loopOffsets, loopNest - 1), SEEK_SET);
+                        //     fline.num = get_lsi32(&loopLineNum, loopNest - 1) - 1;
+                        //     loopNum++;
+                        // }
+                        // else if (falseExp && loopNest)
+                        // {
+                        //     PRINTTYPEDB("end case 4");
+                        //     if (loopNest == 1)
+                        //     {
+                        //         loopNum = 0;
+                        //         clear_lsi32(&loopOffsets);
+                        //         clear_lsi32(&loopLineNum);
+                        //     }
+
+                        //     if (falseLoopNest == nest)
+                        //     {
+                        //         falseExp = 0;
+                        //         falseLoop = 0;
+                        //         falseLoopNest = 0;
+                        //     }
+                        //     loopNest--;
+
+                        //     if (brokeLoop)
+                        //     {
+                        //         brokeLoop = 0;
+                        //         falseExp = 0;
+                        //     }
+                        // }
+                        // else if (!falseExp)
+                        // {
+                        //     WARNING_HERE
+                        // }
                     }
                     else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_IF"))
                     {
-                        controlNest++;
+                        nest++;
+                        if (isLoop.size == nest - 1)
+                        {
+                            expC++;
+                            pushBool_lui16(&isLoop, FALSE);
+                        }
+                        else
+                        {
+                            set_lui16(&isLoop, nest - 1, FALSE);
+                        }
+                        ifInit++;
 
                         if (falseExp)
                         {
@@ -184,7 +362,8 @@ int main(int argc, char *argv[])
                             else
                             {
                                 falseExp = 1;
-                                falseExpNest = controlNest;
+                                falseIf = 1;
+                                falseIfExp = nest;
                             }
 
                             if (condCode)
@@ -201,7 +380,8 @@ int main(int argc, char *argv[])
                             else
                             {
                                 falseExp = 1;
-                                falseExpNest = controlNest;
+                                falseIf = 1;
+                                falseIfExp = nest;
                             }
 
                             if (condCode)
@@ -218,15 +398,15 @@ int main(int argc, char *argv[])
                     }
                     else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_ELIF"))
                     {
-                        if (!controlNest)
+                        if (!ifInit || get_lui16(&isLoop, nest - 1))
                         {
                             ERROR_HERE
                         }
-                        else if (falseExp && falseExpNest != controlNest && !controlDone)
+                        else if (falseExp && falseIfExp != nest && !controlDone)
                         {
                             goto skip;
                         }
-                        else if (falseExp && falseExpNest == controlNest && !controlDone)
+                        else if (falseExp && falseIfExp == nest && !controlDone)
                         {
                             size_t condCode;
 
@@ -241,11 +421,12 @@ int main(int argc, char *argv[])
                                 {
                                     controlDone = 1;
                                     falseExp = 0;
+                                    falseIf = 0;
                                 }
                                 else
                                 {
                                     falseExp = 1;
-                                    falseExpNest = controlNest;
+                                    falseIf = 1;
                                 }
 
                                 if (condCode)
@@ -258,12 +439,11 @@ int main(int argc, char *argv[])
                                 if (cond(&condCode, get_ls(fline.ftoken->toks, 1)))
                                 {
                                     controlDone = 1;
-                                    falseExp = 0;
                                 }
                                 else
                                 {
                                     falseExp = 1;
-                                    falseExpNest = controlNest;
+                                    falseIf = 1;
                                 }
 
                                 if (condCode)
@@ -279,39 +459,195 @@ int main(int argc, char *argv[])
                         else if (controlDone)
                         {
                             falseExp = 1;
+                            falseIf = 1;
+                            falseIfExp = nest;
                         }
 
                         PRINTTYPEDB("control elseif");
                     }
                     else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_ELSE"))
                     {
-                        if (!controlNest)
+                        if (!ifInit || get_lui16(&isLoop, nest - 1))
                         {
                             ERROR_HERE
                         }
-                        else if (falseExp && falseExpNest != controlNest && !controlDone)
+                        else if (falseExp && falseIfExp != nest && !controlDone)
                         {
                             goto skip;
                         }
-                        else if (falseExp && falseExpNest == controlNest && !controlDone)
+                        else if (falseExp && falseIfExp == nest && !controlDone)
                         {
                             falseExp = 0;
+                            falseIf = 0;
                         }
                         else if (controlDone)
                         {
                             falseExp = 1;
+                            falseIf = 1;
+                            falseIfExp = nest;
                         }
 
                         PRINTTYPEDB("control else");
                     }
                     else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_LOOP"))
                     {
+                        // printf("nest: %d lnest: %d clnest: %d loop#: %d oSize: %zu", nest, loopNest, currentLoopNest, loopNum, loopOffsets.size);
+                        nest++;
+
+                        if (isLoop.size == nest - 1)
+                        {
+                            expC++;
+                            pushBool_lui16(&isLoop, TRUE);
+                        }
+                        else
+                        {
+                            set_lui16(&isLoop, nest - 1, TRUE);
+                        }
+
                         if (falseExp)
                         {
                             goto skip;
                         }
 
+                        size_t condCode;
+
+                        if (getLineSize(&fline) == 3)
+                        {
+                            if (strcmp(get_ls(fline.ftoken->toks, 1), "KW_COND_BLOCK"))
+                            {
+                                ERROR_HERE
+                            }
+
+                            if (cond(&condCode, get_ls(fline.ftoken->toks, 2)))
+                            {
+                                if (!loopNum && !fLoop && currentLoopNest < nest)
+                                {
+                                    // printf("\nshould only happen once case 1\n");
+                                    loopNest++;
+                                    push_lsi32(&loopOffsets, get_offset(&fline, fline.num));
+                                    push_lsi32(&loopLineNum, fline.num);
+                                }
+                                else if (loopOffsets.size < loopNest)
+                                {
+                                    // printf("\nshould only happen once case 2\n");
+                                    loopNest++;
+                                    push_lsi32(&loopOffsets, get_offset(&fline, fline.num));
+                                    push_lsi32(&loopLineNum, fline.num);
+                                }
+                                else if (get_lsi32(&loopLineNum, loopNest - 1) != fline.num)
+                                {
+                                    // printf("\nshould only happen once case 3\n");
+                                    loopNest++;
+                                    set_lsi32(&loopOffsets, loopNest - 1, get_offset(&fline, fline.num));
+                                    set_lsi32(&loopLineNum, loopNest - 1, fline.num);
+                                }
+                                // else if (get_lsi32(&loopLineNum, loopNest - 1) == fline.num)
+                                // {
+                                //     printf("\nshould only happen once case 4\n");
+                                //     loopNest++;
+                                // }
+                                currentLoopNest = nest;
+                            }
+                            else
+                            {
+                                if (get_lsi32(&loopLineNum, loopNest - 1) != fline.num)
+                                {
+                                    // printf("\nshould only happen once case 4\n");
+                                    loopNest++;
+                                    set_lsi32(&loopOffsets, loopNest - 1, get_offset(&fline, fline.num));
+                                    set_lsi32(&loopLineNum, loopNest - 1, fline.num);
+                                }
+                                falseExp = 1;
+                                falseLoop = 1;
+                                falseLoopExp = nest;
+                            }
+
+                            if (condCode)
+                            {
+                                ERROR_HERE
+                            }
+                        }
+                        else if (getLineSize(&fline) == 2)
+                        {
+                            if (strcmp(get_ls(fline.ftoken->toks, 1), "KW_COND_BLOCK"))
+                            {
+                                ERROR_HERE
+                            }
+
+                            if (cond(&condCode, get_ls(fline.ftoken->toks, 1)))
+                            {
+                                if (!loopNum && !fLoop && currentLoopNest < nest)
+                                {
+                                    // printf("\nshould only happen once case 1\n");
+                                    loopNest++;
+                                    push_lsi32(&loopOffsets, get_offset(&fline, fline.num));
+                                    push_lsi32(&loopLineNum, fline.num);
+                                }
+                                else if (loopOffsets.size < loopNest)
+                                {
+                                    // printf("\nshould only happen once case 2\n");
+                                    loopNest++;
+                                    push_lsi32(&loopOffsets, get_offset(&fline, fline.num));
+                                    push_lsi32(&loopLineNum, fline.num);
+                                }
+                                else if (get_lsi32(&loopLineNum, loopNest - 1) != fline.num)
+                                {
+                                    // printf("\nshould only happen once case 3\n");
+                                    loopNest++;
+                                    set_lsi32(&loopOffsets, loopNest - 1, get_offset(&fline, fline.num));
+                                    set_lsi32(&loopLineNum, loopNest - 1, fline.num);
+                                }
+                                // else if (get_lsi32(&loopLineNum, loopNest - 1) == fline.num)
+                                // {
+                                //     printf("\nshould only happen once case 4\n");
+                                //     loopNest++;
+                                // }
+                                currentLoopNest = nest;
+                            }
+                            else
+                            {
+                                if (get_lsi32(&loopLineNum, loopNest - 1) != fline.num)
+                                {
+                                    // printf("\nshould only happen once case 4\n");
+                                    loopNest++;
+                                    set_lsi32(&loopOffsets, loopNest - 1, get_offset(&fline, fline.num));
+                                    set_lsi32(&loopLineNum, loopNest - 1, fline.num);
+                                }
+                                falseExp = 1;
+                                falseLoop = 1;
+                                falseLoopExp = nest;
+                            }
+
+                            if (condCode)
+                            {
+                                ERROR_HERE
+                            }
+                        }
+                        else
+                        {
+                            ERROR_HERE
+                        }
+
                         PRINTTYPEDB("loop");
+                    }
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_BREAK"))
+                    {
+                        if (falseExp)
+                        {
+                            goto skip;
+                        }
+                        else if (loopNest)
+                        {
+                            falseExp = 1;
+                            falseLoop = 1;
+                            brokeLoop = loopNest;
+                        }
+                        else
+                        {
+                            ERROR_HERE
+                        }
+
+                        PRINTTYPEDB("break loop");
                     }
                     else if (!strcmp(get_ls(fline.ftoken->toks, 0), "\n"))
                     {
@@ -840,7 +1176,7 @@ int main(int argc, char *argv[])
                                         size_t t = autoType(2);
                                         char *endChar;
 
-                                        if (t > 1 && t < 8 && getLineSize(&fline) < 3)
+                                        if (t > 1 && t < 8)
                                         {
                                             unsigned long long ull = strtoull(get_ls(fline.ftoken->toks, 2), &endChar, 10);
                                             switch (*endChar)
@@ -864,6 +1200,7 @@ int main(int argc, char *argv[])
                                                 {
                                                     ERROR_HERE
                                                 }
+                                                break;
                                             }
                                         }
 
@@ -1048,7 +1385,7 @@ int main(int argc, char *argv[])
                                         case 1:
                                             if (loc[0] == 1)
                                             {
-                                                if (strcmp(get_ls(fline.ftoken->toks, 2), "off"))
+                                                if (strcmp(get_ls(fline.ftoken->toks, 2), "KW_OFF"))
                                                 {
                                                     set_lui16(&stateVal, loc[1], TRUE);
                                                 }
@@ -1063,39 +1400,26 @@ int main(int argc, char *argv[])
                                             }
                                             break;
                                         case 2:
-                                            if (loc[0] == 2)
-                                            {
-                                                set_lui16(&natVal, loc[1], (uint16_t)strtoull((get_ls(fline.ftoken->toks, 2)), &endChar, 10));
-                                            }
-                                            else
-                                            {
-                                                ERROR_HERE
-                                            }
-                                            break;
                                         case 3:
-                                            if (loc[0] == 3)
-                                            {
-                                                set_lui64(&nat64Val, loc[1], strtoull((get_ls(fline.ftoken->toks, 2)), &endChar, 10));
-                                            }
-                                            else
-                                            {
-                                                ERROR_HERE
-                                            }
-                                            break;
                                         case 4:
-                                            if (loc[0] == 4)
-                                            {
-                                                set_lsi32(&intVal, loc[1], (int32_t)atoll((get_ls(fline.ftoken->toks, 2))));
-                                            }
-                                            else
-                                            {
-                                                ERROR_HERE
-                                            }
-                                            break;
                                         case 5:
-                                            if (loc[0] == 4)
+                                            if (loc[0] > 1 && loc[0] < 6)
                                             {
-                                                set_lsi64(&int64Val, loc[1], atoll((get_ls(fline.ftoken->toks, 2))));
+                                                switch (loc[0])
+                                                {
+                                                case 2:
+                                                    set_lui16(&natVal, loc[1], (uint16_t)strtoull(get_ls(fline.ftoken->toks, 2), &endChar, 10));
+                                                    break;
+                                                case 3:
+                                                    set_lui64(&nat64Val, loc[1], (uint64_t)strtoull(get_ls(fline.ftoken->toks, 2), &endChar, 10));
+                                                    break;
+                                                case 4:
+                                                    set_lsi32(&intVal, loc[1], (int32_t)strtoll(get_ls(fline.ftoken->toks, 2), &endChar, 10));
+                                                    break;
+                                                case 5:
+                                                    set_lsi64(&int64Val, loc[1], (int64_t)strtoll(get_ls(fline.ftoken->toks, 2), &endChar, 10));
+                                                    break;
+                                                }
                                             }
                                             else
                                             {
@@ -1103,19 +1427,18 @@ int main(int argc, char *argv[])
                                             }
                                             break;
                                         case 6:
-                                            if (loc[0] == 6)
-                                            {
-                                                set_lf32(&fracVal, loc[1], (float)atof(get_ls(fline.ftoken->toks, 2)));
-                                            }
-                                            else
-                                            {
-                                                ERROR_HERE
-                                            }
-                                            break;
                                         case 7:
-                                            if (loc[0] == 7)
+                                            if (loc[0] > 5 && loc[0] < 8)
                                             {
-                                                set_ld64(&frac64Val, loc[1], atof(get_ls(fline.ftoken->toks, 2)));
+                                                switch (loc[0])
+                                                {
+                                                case 6:
+                                                    set_lf32(&fracVal, loc[1], (float)strtold(get_ls(fline.ftoken->toks, 2), &endChar));
+                                                    break;
+                                                case 7:
+                                                    set_ld64(&frac64Val, loc[1], (double)strtold(get_ls(fline.ftoken->toks, 2), &endChar));
+                                                    break;
+                                                }
                                             }
                                             else
                                             {
@@ -1165,8 +1488,9 @@ int main(int argc, char *argv[])
                     freeToken(fline.ftoken);
                 }
 
-                if (controlNest)
+                if (nest)
                 {
+                    printf("\nnest over: %d", nest);
                     ERROR_HERE
                 }
                 // printf("%d", fline.num);

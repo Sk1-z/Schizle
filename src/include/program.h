@@ -25,9 +25,6 @@
     throwError(arg, argv, fline.num); \
     goto exit;
 
-// --Debug--
-int pointNum = 1;
-
 // Initialize reading variables
 int noWarning = 1;
 char lineBuf[CHARACTER_LIMIT];
@@ -39,12 +36,29 @@ int intepreterState = 1;
 // Runtime booleans
 int program = 0;
 int get = 1;
-
-int controlNest = 0;
-int controlDone = 0;
-int loopExp = 0;
+int offset = 0;
+// Expressions
+int nest = 0;
+int expC = 0;
 int falseExp = 0;
-int falseExpNest = 0;
+list_lui16 isLoop;
+// Control
+int ifInit = 0;
+int controlDone = 0;
+int falseIf = 0;
+int falseIfExp = 0;
+// Loops
+int loopNest = 0;
+int loopNum = 0;
+int fLoop = 0;
+int currentLoopNest = 0;
+int falseLoop = 0;
+int falseLoopExp = 0;
+int brokeLoop = 0;
+list_lsi32 loopLineNum;
+list_lsi32 loopOffsets;
+
+// Instructions
 int paramInit = 0;
 // Program list
 list_ls argBuf;
@@ -293,6 +307,9 @@ size_t autoType(size_t i)
     init_lui16(&typeArg);                    \
                                              \
     initOffsets(&fline);                     \
+    init_lsi32(&loopOffsets);                \
+    init_lsi32(&loopLineNum);                \
+    init_lui16(&isLoop);                     \
                                              \
     init_lui16(&stateVal);                   \
     init_lui16(&natVal);                     \
@@ -328,6 +345,10 @@ size_t autoType(size_t i)
     free_ls(&argBuf);              \
     free_lui16(&isStringArg);      \
     free_lui16(&typeArg);          \
+                                   \
+    free_lsi32(&loopOffsets);      \
+    free_lsi32(&loopLineNum);      \
+    free_lui16(&isLoop);           \
     freeOffsets(&(fline.offsets)); \
                                    \
     free_lui16(&stateVal);         \
