@@ -1,7 +1,7 @@
 -- premake5.lua
 
 -- workspace
-workspace "Schizle"
+workspace "Schizle Script"
 configurations { "Debug", "Release" }
 platforms { "windows", "mac", "linux" }
 
@@ -23,29 +23,11 @@ system "linux"
 
 -- lang
 
-project "schizle_interpreter"
-language "C"
-targetdir "bin/%{cfg.buildcfg}"
-kind "ConsoleApp"
-
--- files
-files { "src/Schizle.c", "src/include/*.h", "modules/*.h" }
-
--- builder
-
-project "schizle_builder"
-language "C"
-targetdir "bin/%{cfg.buildcfg}"
-kind "ConsoleApp"
-
--- files
-files { "src/builder.c", "src/include/*.h", "modules/*.h" }
-
 project "Schizle"
 language "C"
 targetdir "bin/%{cfg.buildcfg}"
 kind "ConsoleApp"
 
 -- files
-files { "src/command.c", "src/include/*.h", "modules/*.h" }
-dependson { "schizle_interpreter", "schizle_builder" }
+files { "src/command.c" }
+-- "src/include/*.h", "modules/*.h", "modules/*.c" }

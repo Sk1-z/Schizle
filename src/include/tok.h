@@ -412,6 +412,10 @@ token *tokenize(char *string)
         {
             set_ls(tok->toks, i, "KW_ALIAS");
         }
+        else if (!strcmp(get_ls(tok->toks, i), "get"))
+        {
+            set_ls(tok->toks, i, "KW_GET");
+        }
         else if (!strcmp(get_ls(tok->toks, i), "if"))
         {
             set_ls(tok->toks, i, "KW_IF");

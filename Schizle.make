@@ -22,7 +22,7 @@ ifeq ($(config),debug_windows)
   endif
   TARGETDIR = bin/Debug
   TARGET = $(TARGETDIR)/Schizle.exe
-  OBJDIR = obj/windows/Debug/Schizle
+  OBJDIR = obj/windows/Debug
   DEFINES += -DDEBUG
   INCLUDES +=
   FORCE_INCLUDE +=
@@ -57,7 +57,7 @@ ifeq ($(config),debug_mac)
   endif
   TARGETDIR = bin/Debug
   TARGET = $(TARGETDIR)/Schizle
-  OBJDIR = obj/mac/Debug/Schizle
+  OBJDIR = obj/mac/Debug
   DEFINES += -DDEBUG
   INCLUDES +=
   FORCE_INCLUDE +=
@@ -92,7 +92,7 @@ ifeq ($(config),debug_linux)
   endif
   TARGETDIR = bin/Debug
   TARGET = $(TARGETDIR)/Schizle
-  OBJDIR = obj/linux/Debug/Schizle
+  OBJDIR = obj/linux/Debug
   DEFINES += -DDEBUG
   INCLUDES +=
   FORCE_INCLUDE +=
@@ -127,7 +127,7 @@ ifeq ($(config),release_windows)
   endif
   TARGETDIR = bin/Release
   TARGET = $(TARGETDIR)/Schizle.exe
-  OBJDIR = obj/windows/Release/Schizle
+  OBJDIR = obj/windows/Release
   DEFINES += -DRELEASE
   INCLUDES +=
   FORCE_INCLUDE +=
@@ -162,7 +162,7 @@ ifeq ($(config),release_mac)
   endif
   TARGETDIR = bin/Release
   TARGET = $(TARGETDIR)/Schizle
-  OBJDIR = obj/mac/Release/Schizle
+  OBJDIR = obj/mac/Release
   DEFINES += -DRELEASE
   INCLUDES +=
   FORCE_INCLUDE +=
@@ -197,7 +197,7 @@ ifeq ($(config),release_linux)
   endif
   TARGETDIR = bin/Release
   TARGET = $(TARGETDIR)/Schizle
-  OBJDIR = obj/linux/Release/Schizle
+  OBJDIR = obj/linux/Release
   DEFINES += -DRELEASE
   INCLUDES +=
   FORCE_INCLUDE +=

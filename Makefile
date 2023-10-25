@@ -9,63 +9,37 @@ ifndef verbose
 endif
 
 ifeq ($(config),debug_windows)
-  schizle_interpreter_config = debug_windows
-  schizle_builder_config = debug_windows
   Schizle_config = debug_windows
 endif
 ifeq ($(config),debug_mac)
-  schizle_interpreter_config = debug_mac
-  schizle_builder_config = debug_mac
   Schizle_config = debug_mac
 endif
 ifeq ($(config),debug_linux)
-  schizle_interpreter_config = debug_linux
-  schizle_builder_config = debug_linux
   Schizle_config = debug_linux
 endif
 ifeq ($(config),release_windows)
-  schizle_interpreter_config = release_windows
-  schizle_builder_config = release_windows
   Schizle_config = release_windows
 endif
 ifeq ($(config),release_mac)
-  schizle_interpreter_config = release_mac
-  schizle_builder_config = release_mac
   Schizle_config = release_mac
 endif
 ifeq ($(config),release_linux)
-  schizle_interpreter_config = release_linux
-  schizle_builder_config = release_linux
   Schizle_config = release_linux
 endif
 
-PROJECTS := schizle_interpreter schizle_builder Schizle
+PROJECTS := Schizle
 
 .PHONY: all clean help $(PROJECTS) 
 
 all: $(PROJECTS)
 
-schizle_interpreter:
-ifneq (,$(schizle_interpreter_config))
-	@echo "==== Building schizle_interpreter ($(schizle_interpreter_config)) ===="
-	@${MAKE} --no-print-directory -C . -f schizle_interpreter.make config=$(schizle_interpreter_config)
-endif
-
-schizle_builder:
-ifneq (,$(schizle_builder_config))
-	@echo "==== Building schizle_builder ($(schizle_builder_config)) ===="
-	@${MAKE} --no-print-directory -C . -f schizle_builder.make config=$(schizle_builder_config)
-endif
-
-Schizle: schizle_interpreter schizle_builder
+Schizle:
 ifneq (,$(Schizle_config))
 	@echo "==== Building Schizle ($(Schizle_config)) ===="
 	@${MAKE} --no-print-directory -C . -f Schizle.make config=$(Schizle_config)
 endif
 
 clean:
-	@${MAKE} --no-print-directory -C . -f schizle_interpreter.make clean
-	@${MAKE} --no-print-directory -C . -f schizle_builder.make clean
 	@${MAKE} --no-print-directory -C . -f Schizle.make clean
 
 help:
@@ -82,8 +56,6 @@ help:
 	@echo "TARGETS:"
 	@echo "   all (default)"
 	@echo "   clean"
-	@echo "   schizle_interpreter"
-	@echo "   schizle_builder"
 	@echo "   Schizle"
 	@echo ""
 	@echo "For more information, see https://github.com/premake/premake-core/wiki"

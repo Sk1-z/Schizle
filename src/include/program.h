@@ -6,7 +6,6 @@
 #include "tok.h"
 
 #include "throwError.h"
-#include "throwWarning.h"
 
 #define CHARACTER_LIMIT 256
 
@@ -16,14 +15,13 @@
 #define ERROR_HERE            \
     printf("\nERROR_HERE\n"); \
     goto exit;
-#define WARNING_HERE            \
-    printf("\nWARNING_HERE\n"); \
-    goto skip;
 
-#define THROW_ERROR(arg)              \
-    exitCode = arg;                   \
-    throwError(arg, argv, fline.num); \
-    goto exit;
+#define I_ERROR(ERROR)       \
+    freeToken(fline.ftoken); \
+    FREE_PROGRAM             \
+    return ERROR;
+
+#define THROW_ERROR(arg) throwError(arg, argc, argv, errorLine);
 
 // Initialize reading variables
 int noWarning = 1;
@@ -86,7 +84,7 @@ struct module_data modules;
     {                                                   \
         if (get_lui16(&(modules.moduleID), i) == modID) \
         {                                               \
-            ERROR_HERE                                  \
+            I_ERROR(9)                                  \
         }                                               \
     }
 
@@ -158,20 +156,20 @@ size_t autoType(size_t i)
             long long ll = strtoll(value, &endChar, 10);         \
             if (*endChar != '\0')                                \
             {                                                    \
-                ERROR_HERE                                       \
+                I_ERROR(19)                                      \
             }                                                    \
             break;                                               \
         case '.':                                                \
             float dbl = strtof(value, &endChar);                 \
             if (*endChar != '\0')                                \
             {                                                    \
-                ERROR_HERE                                       \
+                I_ERROR(19)                                      \
             }                                                    \
             break;                                               \
         default:                                                 \
             if (*endChar != '\0')                                \
             {                                                    \
-                ERROR_HERE                                       \
+                I_ERROR(19)                                      \
             }                                                    \
         }                                                        \
     }                                                            \
@@ -179,7 +177,7 @@ size_t autoType(size_t i)
     switch (id)                                                  \
     {                                                            \
     case 0:                                                      \
-        ERROR_HERE                                               \
+        I_ERROR(20)                                              \
         break;                                                   \
     case 1:                                                      \
         pushTable(&varTable, 1, stateVal.size);                  \
@@ -360,6 +358,4 @@ size_t autoType(size_t i)
     free_ld64(&frac64Val);         \
     free_ls(&textVal);             \
                                    \
-    freeModules(&modules);         \
-                                   \
-    printf("\n\nsuccessfully freed memory");
+    freeModules(&modules);
