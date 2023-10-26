@@ -97,7 +97,7 @@ void throwError(int errorNum, int argc, char **argv, int lineNum)
         undefinedFunction(fileName, lineNum);
         break;
     case 28:
-        moreArgs(fileName, lineNum);
+        wrongNumberOfArgs(fileName, lineNum);
         break;
     }
 }

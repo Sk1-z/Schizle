@@ -1,7 +1,7 @@
 int pointNum = 1;
 
 #ifdef DEBUG
-#define PRINTTYPEDB(str) printf("\n%s\n", str)
+#define PRINTTYPEDB(str) // printf("\n%s\n", str)
 #define PRINT_POINT                   \
     printf("\nPoint %d\n", pointNum); \
     pointNum++;
@@ -15,6 +15,7 @@ int pointNum = 1;
 #include <string.h>
 
 #include "include/program.h"
+#include "../modules/export.h"
 #include "interpret.c"
 
 int main(int argc, char *argv[])

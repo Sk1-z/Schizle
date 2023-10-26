@@ -170,7 +170,7 @@ void undefinedFunction(char *file, int line)
 }
 
 // 28
-void moreArgs(char *file, int line)
+void wrongNumberOfArgs(char *file, int line)
 {
-    printf("%s %d | ERROR: not enough args", file, line);
+    printf("%s %d | ERROR: incorrect number of args", file, line);
 }

@@ -1,4 +1,8 @@
 get std
 
-!["Hello world"]
-call @std::cli_out
+!input: text = "../../two.ski"
+!output: text
+!myVar: nat16
+
+![input]
+call @std::do_script

@@ -1,11 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "include/tok.h"
-#include "include/expressions.h"
 #include "include/program.h"
-
-#include "../modules/export.h"
+#include "include/expressions.h"
 
 int interpret(char *fileName, size_t *eLine)
 {
@@ -49,13 +46,13 @@ int interpret(char *fileName, size_t *eLine)
                         }
                     }
 
-                    if (!strcmp(get_ls(fline.ftoken->toks, 1), "schizle_standard_library") || !strcmp(get_ls(fline.ftoken->toks, 1), "ssl") || !strcmp(get_ls(fline.ftoken->toks, 1), "std"))
+                    if (!strcmp(get_ls(fline.ftoken->toks, 1), "std_lib") || !strcmp(get_ls(fline.ftoken->toks, 1), "std"))
                     {
                         CHECK_MODULE(1)
 
                         if (getLineSize(&fline) < 4)
                         {
-                            GET_SSL(get_ls(fline.ftoken->toks, 1))
+                            GET_STD(get_ls(fline.ftoken->toks, 1))
                         }
                         else
                         {
@@ -63,7 +60,7 @@ int interpret(char *fileName, size_t *eLine)
                             {
                                 I_ERROR(10)
                             }
-                            GET_SSL(get_ls(fline.ftoken->toks, 3))
+                            GET_STD(get_ls(fline.ftoken->toks, 3))
                         }
                         PRINTTYPEDB("got ssl");
                     }
@@ -107,6 +104,7 @@ int interpret(char *fileName, size_t *eLine)
                 // printf("\nOFFSET %d", offset);
             }
             fline.num++;
+            *eLine = fline.num;
 
         get_skip:
 
@@ -957,7 +955,7 @@ int interpret(char *fileName, size_t *eLine)
                         if (get_lui16(&(fline.ftoken->isStringL), i))
                         {
                             pushBool_lui16(&isStringArg, TRUE);
-                            push_lui16(&typeArg, 8);
+                            push_lui16(&typeArg, 9);
                         }
                         else
                         {
@@ -1063,6 +1061,11 @@ int interpret(char *fileName, size_t *eLine)
                                         {
                                             I_ERROR(20)
                                         }
+                                    case 9:
+                                        if (get_lui16(&typeArg, i) != 8 && get_lui16(&typeArg, i) != 9)
+                                        {
+                                            I_ERROR(20)
+                                        }
                                         break;
                                     }
                                 }
@@ -1114,6 +1117,11 @@ int interpret(char *fileName, size_t *eLine)
                                         break;
                                     case 8:
                                         if (get_lui16(&typeArg, i) != 8)
+                                        {
+                                            I_ERROR(20)
+                                        }
+                                    case 9:
+                                        if (get_lui16(&typeArg, i) != 8 && get_lui16(&typeArg, i) != 9)
                                         {
                                             I_ERROR(20)
                                         }

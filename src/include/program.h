@@ -358,4 +358,5 @@ size_t autoType(size_t i)
     free_ld64(&frac64Val);         \
     free_ls(&textVal);             \
                                    \
-    freeModules(&modules);
+    freeModules(&modules);         \
+    // printf("done");
