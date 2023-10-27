@@ -4,7 +4,7 @@
 #include "include/program.h"
 #include "include/expressions.h"
 
-int interpret(char *fileName, size_t *eLine)
+int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
 {
     // File entry point
     FILE *ski = fopen(fileName, "r");
@@ -13,6 +13,19 @@ int interpret(char *fileName, size_t *eLine)
         program = 1;
         // pre processing
         INIT_PROGRAM(fileName)
+        if (pargc)
+        {
+            char name[6];
+            for (size_t i = 0; i < pargc; i++)
+            {
+                sprintf(name, "PARG%zu", i + 1);
+                push_ls(&varBuf, name);
+                pushTable(&varTable, 8, textVal.size);
+                push_ls(&textVal, pargv[i]);
+                pushBool_lui16(&(varMut), FALSE);
+                pushBool_lui16(&(varDef), TRUE);
+            }
+        }
 
         // parse file
         while (get)
@@ -907,7 +920,7 @@ int interpret(char *fileName, size_t *eLine)
                             NEW_VALUE(t, get_ls(fline.ftoken->toks, 1), "off", c)
                             break;
                         case 8:
-                            NEW_VALUE(t, get_ls(fline.ftoken->toks, 1), "0", c)
+                            NEW_VALUE(t, get_ls(fline.ftoken->toks, 1), "\0", c)
                             break;
                         default:
                             NEW_VALUE(t, get_ls(fline.ftoken->toks, 1), "0", c)
@@ -1023,7 +1036,7 @@ int interpret(char *fileName, size_t *eLine)
                         {
                             struct functionSig sig = get_sig(&(module->functionSignatures), funcI);
 
-                            if (getSize_ls(&argBuf) != sig.numArgs)
+                            if (getSize_ls(&argBuf) < sig.numArgs)
                             {
                                 I_ERROR(28)
                             }

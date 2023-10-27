@@ -20,16 +20,14 @@ int pointNum = 1;
 
 int main(int argc, char *argv[])
 {
+    size_t programArgc = 0;
+    char *programArgv[64];
     size_t errorLine;
     int exitCode;
 
     if (argc == 1)
     {
         THROW_ERROR(4)
-    }
-    else if (argc == 5)
-    {
-        THROW_ERROR(1)
     }
     else if (!strcmp(argv[1], "help") || !strcmp(argv[1], "-h"))
     {
@@ -38,12 +36,14 @@ int main(int argc, char *argv[])
         printf("  version, -v   version info\n");
         printf("  help, -h      help\n");
         printf("  run, -r       run script\n");
-        printf("  build, -b     transpile script using clang by default\n\n");
+        printf("  build, -t     transpile script using clang by default\n\n");
+        printf("Run options:\n");
+        printf("  -a  run with args\n\n");
         printf("Build options:\n");
         printf("  -c  build with clang (default)\n");
         printf("  -g  build with gcc\n");
         printf("  -s  output source\n");
-        printf("  -t  translate without building\n");
+        printf("  -w  translate without building\n");
     }
     else if (!strcmp(argv[1], "version") || !strcmp(argv[1], "-v"))
     {
@@ -64,15 +64,35 @@ int main(int argc, char *argv[])
     }
     else if (!strcmp(argv[1], "run") || !strcmp(argv[1], "-r"))
     {
-        if (argc != 3)
+        if (argc < 3)
         {
             THROW_ERROR(4)
         }
         else
         {
-            if (argc == 4)
+            if (argc > 4)
             {
-                if (!strcmp(argv[3], "-c") || !strcmp(argv[3], "-g") || !strcmp(argv[3], "-t") || !strcmp(argv[3], "-v"))
+                if (!strcmp(argv[3], "-a"))
+                {
+                    programArgc = argc - 4;
+                    for (size_t i = 0; i < argc - 4; i++)
+                    {
+                        programArgv[i] = argv[i + 4];
+                    }
+                    exitCode = interpret(argv[2], &errorLine, programArgc, programArgv);
+                }
+                else
+                {
+                    THROW_ERROR(1)
+                }
+            }
+            else if (argc == 4)
+            {
+                if (!strcmp(argv[3], "-a"))
+                {
+                    THROW_ERROR(6)
+                }
+                else if (!strcmp(argv[3], "-c") || !strcmp(argv[3], "-g") || !strcmp(argv[3], "-t") || !strcmp(argv[3], "-v"))
                 {
                     THROW_ERROR(6)
                 }
@@ -83,7 +103,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                exitCode = interpret(argv[2], &errorLine);
+                exitCode = interpret(argv[2], &errorLine, 0, NULL);
             }
         }
     }
@@ -114,7 +134,19 @@ int main(int argc, char *argv[])
     }
     else
     {
-        exitCode = interpret(argv[1], &errorLine);
+        if (argc > 2)
+        {
+            programArgc = argc - 2;
+            for (size_t i = 0; i < argc - 2; i++)
+            {
+                programArgv[i] = argv[i + 2];
+            }
+            exitCode = interpret(argv[1], &errorLine, programArgc, programArgv);
+        }
+        else
+        {
+            exitCode = interpret(argv[1], &errorLine, 0, NULL);
+        }
     }
 
     if (exitCode)

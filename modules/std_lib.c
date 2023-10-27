@@ -85,6 +85,15 @@
     push_sig(&(ssl.functionSignatures), do_script_sig);    \
     push_ls(&(ssl.functionNames), "do_script");            \
                                                            \
+    struct functionSig timeout_sig;                        \
+    init_sig(&timeout_sig);                                \
+    timeout_sig.numArgs = 1;                               \
+    push_lui16(&(timeout_sig.argID), 2);                   \
+    timeout_sig.call = timeout;                            \
+                                                           \
+    push_sig(&(ssl.functionSignatures), timeout_sig);      \
+    push_ls(&(ssl.functionNames), "timeout");              \
+                                                           \
     push_module(&modules, &ssl);
 
 // Standard out
@@ -398,6 +407,40 @@ size_t do_script()
 
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
+
+    return 0;
+}
+
+size_t timeout()
+{
+    size_t index = getIndex_ls(&varBuf, get_ls(&argBuf, 0));
+
+    if (index)
+    {
+        size_t *loc = getVarLookUp(&varTable, index);
+
+        switch (loc[0])
+        {
+        case 2:
+            Sleep(GET_NAT(loc[1]));
+            break;
+        case 3:
+            Sleep(GET_NAT64(loc[1]));
+            break;
+        case 4:
+            Sleep(GET_INT(loc[1]));
+            break;
+        case 5:
+            Sleep(GET_INT64(loc[1]));
+            break;
+        }
+
+        free(loc);
+    }
+    else
+    {
+        return 22;
+    }
 
     return 0;
 }

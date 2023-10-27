@@ -319,18 +319,36 @@ size_t autoType(size_t i)
     init_ls(&textVal);                       \
     init_ls(&textVal);                       \
                                              \
-    push_ls(&varBuf, "#NAME");               \
+    push_ls(&varBuf, "_NAME_");              \
     pushTable(&varTable, 8, textVal.size);   \
     push_ls(&textVal, PNAME);                \
+    pushBool_lui16(&(varMut), FALSE);        \
+    pushBool_lui16(&(varDef), TRUE);         \
+                                             \
+    push_ls(&varBuf, "NULL");                \
+    pushTable(&varTable, 2, natVal.size);    \
+    push_lui16(&natVal, 0);                  \
+    pushBool_lui16(&(varMut), FALSE);        \
+    pushBool_lui16(&(varDef), TRUE);         \
+                                             \
+    push_ls(&varBuf, "NULL_F");              \
+    pushTable(&varTable, 6, fracVal.size);   \
+    push_lf32(&fracVal, 0.0);                \
+    pushBool_lui16(&(varMut), FALSE);        \
+    pushBool_lui16(&(varDef), TRUE);         \
+                                             \
+    push_ls(&varBuf, "NULL_T");              \
+    pushTable(&varTable, 8, textVal.size);   \
+    push_ls(&textVal, "\0");                 \
     pushBool_lui16(&(varMut), FALSE);        \
     pushBool_lui16(&(varDef), TRUE);         \
                                              \
     init_ls(&(modules.moduleNames));         \
     init_lui16(&(modules.moduleID));         \
                                              \
+    struct module main;                      \
     push_ls(&(modules.moduleNames), "main"); \
     push_lui16(&(modules.moduleID), 0);      \
-    struct module main;                      \
     init_ls(&(main.functionNames));          \
     init_lsig(&(main.functionSignatures));   \
     push_module(&(modules), &main);

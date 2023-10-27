@@ -1,8 +1,3 @@
 get std
-
-!input: text = "../../two.ski"
-!output: text
-!myVar: nat16
-
-![input]
-call @std::do_script
+![NULL_T]
+call @std::timeout
