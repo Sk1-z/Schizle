@@ -1,8 +1,9 @@
 #pragma once
 
+#include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdint.h>
 
 // char[] list
 typedef struct
@@ -76,6 +77,7 @@ size_t getIndex_ls(list_ls *list, char *string)
 {
     for (size_t i = 0; i < list->size; ++i)
     {
+        // printf("\n%s", list->data[i]);
         if (!strcmp(string, list->data[i]))
         {
             return i;

@@ -27,7 +27,8 @@ void freeToken(token *tok)
 
 token *tokenize(char *string)
 {
-    token *tok;
+    token *tok = (token *)malloc(sizeof(token));
+    tok->toks = (list_ls *)malloc(sizeof(list_ls));
     initToken(tok);
 
     size_t strLen = strlen(string);
@@ -35,7 +36,7 @@ token *tokenize(char *string)
 
     char *wordStart = (char *)string;
 
-    if (string[0] == '\n' || string[0] == '_')
+    if (string[0] == '\n' || string[0] == '\r' || string[0] == '_')
     {
         push_ls(tok->toks, "\n");
         push_lui16(&(tok->isStringL), 0);
@@ -58,7 +59,7 @@ token *tokenize(char *string)
                 }
                 wordStart = (char *)string + i + 1;
             }
-            else if (string[i] == '\n')
+            else if (string[i] == '\n' || string[i] == '\r')
             {
                 if (tokLen > 0)
                 {

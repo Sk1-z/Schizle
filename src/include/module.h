@@ -2,6 +2,7 @@
 
 #include "lists.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 struct functionSig
@@ -100,9 +101,14 @@ void freeModules(struct module_data *list)
 {
     free_ls(&(list->moduleNames));
     free_lui16(&(list->moduleID));
-    for (int i = 0; i < list->size; ++i)
-    {
-        free_ls(&(list->data[i]->functionNames));
-        free_lsig(&(list->data[i]->functionSignatures));
-    }
+    // printf("\nList size: %zu\n", list->size);
+    // for (int i = 0; i < list->size; i++)
+    // {
+    //     printf("\nLoop: %d %zu\n", i, list->data[0]->functionNames.size);
+    //     // free_ls(&(list->data[i]->functionNames));
+    //     printf("\nNames: %d\n", i);
+    //     // free_lsig(&(list->data[i]->functionSignatures));
+    //     printf("\nSigs: %d\n", i);
+    // }
+    // printf("\nSize: %zu\n", list->size);
 }

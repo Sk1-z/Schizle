@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "include/program.h"
 #include "include/expressions.h"
+#include "include/program.h"
 
 int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
 {
@@ -59,7 +59,8 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                         }
                     }
 
-                    if (!strcmp(get_ls(fline.ftoken->toks, 1), "std_lib") || !strcmp(get_ls(fline.ftoken->toks, 1), "std"))
+                    if (!strcmp(get_ls(fline.ftoken->toks, 1), "std_lib") ||
+                        !strcmp(get_ls(fline.ftoken->toks, 1), "std"))
                     {
                         CHECK_MODULE(1)
 
@@ -472,7 +473,8 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
             }
             else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_LOOP"))
             {
-                // printf("nest: %d lnest: %d clnest: %d loop#: %d oSize: %zu", nest, loopNest, currentLoopNest, loopNum, loopOffsets.size);
+                // printf("nest: %d lnest: %d clnest: %d loop#: %d oSize: %zu", nest, loopNest, currentLoopNest,
+                // loopNum, loopOffsets.size);
                 nest++;
 
                 if (isLoop.size == nest - 1)
@@ -628,7 +630,8 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
             else if (!strcmp(get_ls(fline.ftoken->toks, 0), "\n"))
             {
             }
-            else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_MUT") || !strcmp(get_ls(fline.ftoken->toks, 0), "KW_IMMUT"))
+            else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_MUT") ||
+                     !strcmp(get_ls(fline.ftoken->toks, 0), "KW_IMMUT"))
             {
                 if (falseExp)
                 {
@@ -732,7 +735,8 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                 case 1:
                                     if (declaredType == foundType)
                                     {
-                                        NEW_VALUE(declaredType, get_ls(fline.ftoken->toks, 1), get_ls(fline.ftoken->toks, 5), c)
+                                        NEW_VALUE(declaredType, get_ls(fline.ftoken->toks, 1),
+                                                  get_ls(fline.ftoken->toks, 5), c)
                                     }
                                     else
                                     {
@@ -743,7 +747,8 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                 case 7:
                                     if (declaredType == foundType)
                                     {
-                                        NEW_VALUE(declaredType, get_ls(fline.ftoken->toks, 1), get_ls(fline.ftoken->toks, 5), c)
+                                        NEW_VALUE(declaredType, get_ls(fline.ftoken->toks, 1),
+                                                  get_ls(fline.ftoken->toks, 5), c)
                                     }
                                     else
                                     {
@@ -753,7 +758,8 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                 case 8:
                                     if (declaredType == foundType)
                                     {
-                                        NEW_VALUE(declaredType, get_ls(fline.ftoken->toks, 1), get_ls(fline.ftoken->toks, 5), c)
+                                        NEW_VALUE(declaredType, get_ls(fline.ftoken->toks, 1),
+                                                  get_ls(fline.ftoken->toks, 5), c)
                                     }
                                     else
                                     {
@@ -763,7 +769,8 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                 default:
                                     if (declaredType < 6 && declaredType > 1)
                                     {
-                                        NEW_VALUE(declaredType, get_ls(fline.ftoken->toks, 1), get_ls(fline.ftoken->toks, 5), c)
+                                        NEW_VALUE(declaredType, get_ls(fline.ftoken->toks, 1),
+                                                  get_ls(fline.ftoken->toks, 5), c)
                                     }
                                     else
                                     {
@@ -1027,11 +1034,14 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
 
                     modIndex = getIndex_ls(&(modules.moduleNames), get_ls(fline.ftoken->toks, 2));
 
-                    if (modIndex)
+                    if (modIndex || !strcmp(get_ls(fline.ftoken->toks, 2), get_ls(&(modules.moduleNames), 0)))
                     {
                         struct module *module = get_module(&modules, modIndex);
 
                         size_t funcI = getIndex_ls(&(module->functionNames), get_ls(fline.ftoken->toks, 4));
+                        // printf("\n%d %s\nindex: %s i: %zu\n", modules.data[0]->functionNames.size,
+                        // get_ls(fline.ftoken->toks, 4), module->functionNames.data[1], funcI);
+
                         if (funcI)
                         {
                             struct functionSig sig = get_sig(&(module->functionSignatures), funcI);
@@ -1043,7 +1053,8 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
 
                             for (size_t i = 0; i < sig.argID.size; i++)
                             {
-                                if (get_lui16(&typeArg, i) != get_lui16(&(sig.argID), i) && get_lui16(&(sig.argID), i) != 0)
+                                if (get_lui16(&typeArg, i) != get_lui16(&(sig.argID), i) &&
+                                    get_lui16(&(sig.argID), i) != 0)
                                 {
                                     switch (get_lui16(&(sig.argID), i))
                                     {
@@ -1195,22 +1206,28 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                         I_ERROR(20)
                                         break;
                                     case 2:
-                                        set_lui16(&natVal, loc[1], (uint16_t)eval_ll(&evalCode, get_ls(fline.ftoken->toks, 3)));
+                                        set_lui16(&natVal, loc[1],
+                                                  (uint16_t)eval_ll(&evalCode, get_ls(fline.ftoken->toks, 3)));
                                         break;
                                     case 3:
-                                        set_lui64(&nat64Val, loc[1], (uint64_t)eval_ll(&evalCode, get_ls(fline.ftoken->toks, 3)));
+                                        set_lui64(&nat64Val, loc[1],
+                                                  (uint64_t)eval_ll(&evalCode, get_ls(fline.ftoken->toks, 3)));
                                         break;
                                     case 4:
-                                        set_lsi32(&intVal, loc[1], (int32_t)eval_ll(&evalCode, get_ls(fline.ftoken->toks, 3)));
+                                        set_lsi32(&intVal, loc[1],
+                                                  (int32_t)eval_ll(&evalCode, get_ls(fline.ftoken->toks, 3)));
                                         break;
                                     case 5:
-                                        set_lsi64(&int64Val, loc[1], (int64_t)eval_ll(&evalCode, get_ls(fline.ftoken->toks, 3)));
+                                        set_lsi64(&int64Val, loc[1],
+                                                  (int64_t)eval_ll(&evalCode, get_ls(fline.ftoken->toks, 3)));
                                         break;
                                     case 6:
-                                        set_lf32(&fracVal, loc[1], (float)eval_dbl(&evalCode, get_ls(fline.ftoken->toks, 3)));
+                                        set_lf32(&fracVal, loc[1],
+                                                 (float)eval_dbl(&evalCode, get_ls(fline.ftoken->toks, 3)));
                                         break;
                                     case 7:
-                                        set_ld64(&frac64Val, loc[1], (double)eval_dbl(&evalCode, get_ls(fline.ftoken->toks, 3)));
+                                        set_ld64(&frac64Val, loc[1],
+                                                 (double)eval_dbl(&evalCode, get_ls(fline.ftoken->toks, 3)));
                                         break;
                                     case 8:
                                         I_ERROR(20)
@@ -1299,13 +1316,16 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                                     set_lui16(&natVal, loc[1], get_lui16(&natVal, locSecondVar[1]));
                                                     break;
                                                 case 3:
-                                                    set_lui64(&nat64Val, loc[1], (uint64_t)get_lui16(&natVal, locSecondVar[1]));
+                                                    set_lui64(&nat64Val, loc[1],
+                                                              (uint64_t)get_lui16(&natVal, locSecondVar[1]));
                                                     break;
                                                 case 4:
-                                                    set_lsi32(&intVal, loc[1], (int32_t)get_lui16(&natVal, locSecondVar[1]));
+                                                    set_lsi32(&intVal, loc[1],
+                                                              (int32_t)get_lui16(&natVal, locSecondVar[1]));
                                                     break;
                                                 case 5:
-                                                    set_lsi64(&int64Val, loc[1], (int64_t)get_lui16(&natVal, locSecondVar[1]));
+                                                    set_lsi64(&int64Val, loc[1],
+                                                              (int64_t)get_lui16(&natVal, locSecondVar[1]));
                                                     break;
                                                 }
                                             }
@@ -1320,16 +1340,19 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                                 switch (loc[0])
                                                 {
                                                 case 2:
-                                                    set_lui16(&natVal, loc[1], (uint16_t)get_lui64(&nat64Val, locSecondVar[1]));
+                                                    set_lui16(&natVal, loc[1],
+                                                              (uint16_t)get_lui64(&nat64Val, locSecondVar[1]));
                                                     break;
                                                 case 3:
                                                     set_lui64(&nat64Val, loc[1], get_lui64(&nat64Val, locSecondVar[1]));
                                                     break;
                                                 case 4:
-                                                    set_lsi32(&intVal, loc[1], (int32_t)get_lui64(&nat64Val, locSecondVar[1]));
+                                                    set_lsi32(&intVal, loc[1],
+                                                              (int32_t)get_lui64(&nat64Val, locSecondVar[1]));
                                                     break;
                                                 case 5:
-                                                    set_lsi64(&int64Val, loc[1], (int64_t)get_lui64(&nat64Val, locSecondVar[1]));
+                                                    set_lsi64(&int64Val, loc[1],
+                                                              (int64_t)get_lui64(&nat64Val, locSecondVar[1]));
                                                     break;
                                                 }
                                             }
@@ -1344,16 +1367,19 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                                 switch (loc[0])
                                                 {
                                                 case 2:
-                                                    set_lui16(&natVal, loc[1], (uint16_t)get_lsi32(&intVal, locSecondVar[1]));
+                                                    set_lui16(&natVal, loc[1],
+                                                              (uint16_t)get_lsi32(&intVal, locSecondVar[1]));
                                                     break;
                                                 case 3:
-                                                    set_lui64(&nat64Val, loc[1], (uint64_t)get_lsi32(&intVal, locSecondVar[1]));
+                                                    set_lui64(&nat64Val, loc[1],
+                                                              (uint64_t)get_lsi32(&intVal, locSecondVar[1]));
                                                     break;
                                                 case 4:
                                                     set_lsi32(&intVal, loc[1], get_lsi32(&intVal, locSecondVar[1]));
                                                     break;
                                                 case 5:
-                                                    set_lsi64(&int64Val, loc[1], (int64_t)get_lsi32(&intVal, locSecondVar[1]));
+                                                    set_lsi64(&int64Val, loc[1],
+                                                              (int64_t)get_lsi32(&intVal, locSecondVar[1]));
                                                     break;
                                                 }
                                             }
@@ -1368,13 +1394,16 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                                 switch (loc[0])
                                                 {
                                                 case 2:
-                                                    set_lui16(&natVal, loc[1], (uint16_t)get_lsi64(&int64Val, locSecondVar[1]));
+                                                    set_lui16(&natVal, loc[1],
+                                                              (uint16_t)get_lsi64(&int64Val, locSecondVar[1]));
                                                     break;
                                                 case 3:
-                                                    set_lui64(&nat64Val, loc[1], (uint64_t)get_lsi64(&int64Val, locSecondVar[1]));
+                                                    set_lui64(&nat64Val, loc[1],
+                                                              (uint64_t)get_lsi64(&int64Val, locSecondVar[1]));
                                                     break;
                                                 case 4:
-                                                    set_lsi32(&intVal, loc[1], (int32_t)get_lsi64(&int64Val, locSecondVar[1]));
+                                                    set_lsi32(&intVal, loc[1],
+                                                              (int32_t)get_lsi64(&int64Val, locSecondVar[1]));
                                                     break;
                                                 case 5:
                                                     set_lsi64(&int64Val, loc[1], get_lsi64(&int64Val, locSecondVar[1]));
@@ -1395,7 +1424,8 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                                     set_lf32(&fracVal, loc[1], get_lf32(&fracVal, locSecondVar[1]));
                                                     break;
                                                 case 7:
-                                                    set_ld64(&frac64Val, loc[1], (double)get_lf32(&fracVal, locSecondVar[1]));
+                                                    set_ld64(&frac64Val, loc[1],
+                                                             (double)get_lf32(&fracVal, locSecondVar[1]));
                                                     break;
                                                 }
                                             }
@@ -1410,7 +1440,8 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                                 switch (loc[0])
                                                 {
                                                 case 6:
-                                                    set_lf32(&fracVal, loc[1], (float)get_ld64(&frac64Val, locSecondVar[1]));
+                                                    set_lf32(&fracVal, loc[1],
+                                                             (float)get_ld64(&frac64Val, locSecondVar[1]));
                                                     break;
                                                 case 7:
                                                     set_ld64(&frac64Val, loc[1], get_ld64(&frac64Val, locSecondVar[1]));
@@ -1467,16 +1498,20 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                         switch (loc[0])
                                         {
                                         case 2:
-                                            set_lui16(&natVal, loc[1], (uint16_t)strtoull(get_ls(fline.ftoken->toks, 2), &endChar, 10));
+                                            set_lui16(&natVal, loc[1],
+                                                      (uint16_t)strtoull(get_ls(fline.ftoken->toks, 2), &endChar, 10));
                                             break;
                                         case 3:
-                                            set_lui64(&nat64Val, loc[1], (uint64_t)strtoull(get_ls(fline.ftoken->toks, 2), &endChar, 10));
+                                            set_lui64(&nat64Val, loc[1],
+                                                      (uint64_t)strtoull(get_ls(fline.ftoken->toks, 2), &endChar, 10));
                                             break;
                                         case 4:
-                                            set_lsi32(&intVal, loc[1], (int32_t)strtoll(get_ls(fline.ftoken->toks, 2), &endChar, 10));
+                                            set_lsi32(&intVal, loc[1],
+                                                      (int32_t)strtoll(get_ls(fline.ftoken->toks, 2), &endChar, 10));
                                             break;
                                         case 5:
-                                            set_lsi64(&int64Val, loc[1], (int64_t)strtoll(get_ls(fline.ftoken->toks, 2), &endChar, 10));
+                                            set_lsi64(&int64Val, loc[1],
+                                                      (int64_t)strtoll(get_ls(fline.ftoken->toks, 2), &endChar, 10));
                                             break;
                                         }
                                     }
@@ -1492,10 +1527,12 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                         switch (loc[0])
                                         {
                                         case 6:
-                                            set_lf32(&fracVal, loc[1], (float)strtold(get_ls(fline.ftoken->toks, 2), &endChar));
+                                            set_lf32(&fracVal, loc[1],
+                                                     (float)strtold(get_ls(fline.ftoken->toks, 2), &endChar));
                                             break;
                                         case 7:
-                                            set_ld64(&frac64Val, loc[1], (double)strtold(get_ls(fline.ftoken->toks, 2), &endChar));
+                                            set_ld64(&frac64Val, loc[1],
+                                                     (double)strtold(get_ls(fline.ftoken->toks, 2), &endChar));
                                             break;
                                         }
                                     }
