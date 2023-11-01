@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "include/expressions.h"
+#include "include/module.h"
 #include "include/program.h"
 
 int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
@@ -30,7 +32,6 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
         // parse file
         while (get)
         {
-
             if (fgets(lineBuf, sizeof(lineBuf), ski) == NULL)
             {
                 get = 0;
@@ -1012,6 +1013,8 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                     goto skip;
                 }
 
+                // printf("\nfunction call apparently print doesnt work i hate c\n");
+
                 PRINTTYPEDB("function call");
 
                 if (getLineSize(&fline) < 2)
@@ -1037,26 +1040,28 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                     if (modIndex || !strcmp(get_ls(fline.ftoken->toks, 2), get_ls(&(modules.moduleNames), 0)))
                     {
                         struct module *module = get_module(&modules, modIndex);
-
+                        // printf("\n%d %s\nindex: %s i: %zu\n", modules.data[0]->functionNames.size,
+                        //        get_ls(fline.ftoken->toks, 4), module->functionNames.data[1], modIndex);
                         size_t funcI = getIndex_ls(&(module->functionNames), get_ls(fline.ftoken->toks, 4));
                         // printf("\n%d %s\nindex: %s i: %zu\n", modules.data[0]->functionNames.size,
-                        // get_ls(fline.ftoken->toks, 4), module->functionNames.data[1], funcI);
+                        //        get_ls(fline.ftoken->toks, 4), module->functionNames.data[1], funcI);
 
                         if (funcI)
                         {
-                            struct functionSig sig = get_sig(&(module->functionSignatures), funcI);
+                            struct functionSig *sig = malloc(sizeof(struct functionSig));
+                            sig = get_sig(&(module->functionSignatures), funcI);
 
-                            if (getSize_ls(&argBuf) < sig.numArgs)
+                            if (getSize_ls(&argBuf) < sig->numArgs)
                             {
                                 I_ERROR(28)
                             }
 
-                            for (size_t i = 0; i < sig.argID.size; i++)
+                            for (size_t i = 0; i < sig->argID.size; i++)
                             {
-                                if (get_lui16(&typeArg, i) != get_lui16(&(sig.argID), i) &&
-                                    get_lui16(&(sig.argID), i) != 0)
+                                if (get_lui16(&typeArg, i) != get_lui16(&(sig->argID), i) &&
+                                    get_lui16(&(sig->argID), i) != 0)
                                 {
-                                    switch (get_lui16(&(sig.argID), i))
+                                    switch (get_lui16(&(sig->argID), i))
                                     {
                                     case 1:
                                         if (get_lui16(&typeArg, i) != 1)
@@ -1095,7 +1100,7 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                 }
                             }
 
-                            size_t r = sig.call();
+                            size_t r = sig->call();
 
                             if (r)
                             {
@@ -1106,16 +1111,17 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                         {
                             if (!strcmp(get_ls(fline.ftoken->toks, 4), get_ls(&(module->functionNames), 0)))
                             {
-                                struct functionSig sig = get_sig(&(module->functionSignatures), 0);
+                                struct functionSig *sig = malloc(sizeof(struct functionSig));
+                                sig = get_sig(&(module->functionSignatures), funcI);
 
-                                if (getSize_ls(&argBuf) != sig.numArgs)
+                                if (getSize_ls(&argBuf) != sig->numArgs)
                                 {
                                     I_ERROR(28)
                                 }
 
-                                for (size_t i = 0; i < sig.argID.size; i++)
+                                for (size_t i = 0; i < sig->argID.size; i++)
                                 {
-                                    switch (get_lui16(&(sig.argID), i))
+                                    switch (get_lui16(&(sig->argID), i))
                                     {
                                     case 1:
                                         if (get_lui16(&typeArg, i) != 1)
@@ -1153,7 +1159,7 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                     }
                                 }
 
-                                size_t r = sig.call();
+                                size_t r = sig->call();
 
                                 if (r)
                                 {

@@ -11,19 +11,11 @@ endif
 .PHONY: clean prebuild prelink
 
 ifeq ($(config),debug_windows)
-  ifeq ($(origin CC), default)
-    CC = clang
-  endif
-  ifeq ($(origin CXX), default)
-    CXX = clang++
-  endif
-  ifeq ($(origin AR), default)
-    AR = ar
-  endif
+  RESCOMP = windres
   TARGETDIR = bin/Debug
   TARGET = $(TARGETDIR)/Schizle.exe
   OBJDIR = obj/windows/Debug
-  DEFINES += -DDEBUG
+  DEFINES += -DDEBUG -DWINDOWS
   INCLUDES +=
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
@@ -32,7 +24,7 @@ ifeq ($(config),debug_windows)
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   LIBS +=
   LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS)
+  ALL_LDFLAGS += $(LDFLAGS) -s -lm
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -58,7 +50,7 @@ ifeq ($(config),debug_mac)
   TARGETDIR = bin/Debug
   TARGET = $(TARGETDIR)/Schizle
   OBJDIR = obj/mac/Debug
-  DEFINES += -DDEBUG
+  DEFINES += -DDEBUG -DUNIX
   INCLUDES +=
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
@@ -67,7 +59,7 @@ ifeq ($(config),debug_mac)
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   LIBS +=
   LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS)
+  ALL_LDFLAGS += $(LDFLAGS) -lm
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -81,19 +73,11 @@ all: prebuild prelink $(TARGET)
 endif
 
 ifeq ($(config),debug_linux)
-  ifeq ($(origin CC), default)
-    CC = clang
-  endif
-  ifeq ($(origin CXX), default)
-    CXX = clang++
-  endif
-  ifeq ($(origin AR), default)
-    AR = ar
-  endif
+  RESCOMP = windres
   TARGETDIR = bin/Debug
   TARGET = $(TARGETDIR)/Schizle
   OBJDIR = obj/linux/Debug
-  DEFINES += -DDEBUG
+  DEFINES += -DDEBUG -DUNIX
   INCLUDES +=
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
@@ -102,7 +86,7 @@ ifeq ($(config),debug_linux)
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   LIBS +=
   LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS)
+  ALL_LDFLAGS += $(LDFLAGS) -s -lm
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -116,19 +100,11 @@ all: prebuild prelink $(TARGET)
 endif
 
 ifeq ($(config),release_windows)
-  ifeq ($(origin CC), default)
-    CC = clang
-  endif
-  ifeq ($(origin CXX), default)
-    CXX = clang++
-  endif
-  ifeq ($(origin AR), default)
-    AR = ar
-  endif
+  RESCOMP = windres
   TARGETDIR = bin/Release
   TARGET = $(TARGETDIR)/Schizle.exe
   OBJDIR = obj/windows/Release
-  DEFINES += -DRELEASE
+  DEFINES += -DRELEASE -DWINDOWS
   INCLUDES +=
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
@@ -137,7 +113,7 @@ ifeq ($(config),release_windows)
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   LIBS +=
   LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS)
+  ALL_LDFLAGS += $(LDFLAGS) -s -lm
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -163,7 +139,7 @@ ifeq ($(config),release_mac)
   TARGETDIR = bin/Release
   TARGET = $(TARGETDIR)/Schizle
   OBJDIR = obj/mac/Release
-  DEFINES += -DRELEASE
+  DEFINES += -DRELEASE -DUNIX
   INCLUDES +=
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
@@ -172,7 +148,7 @@ ifeq ($(config),release_mac)
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   LIBS +=
   LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS)
+  ALL_LDFLAGS += $(LDFLAGS) -lm
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef
@@ -186,19 +162,11 @@ all: prebuild prelink $(TARGET)
 endif
 
 ifeq ($(config),release_linux)
-  ifeq ($(origin CC), default)
-    CC = clang
-  endif
-  ifeq ($(origin CXX), default)
-    CXX = clang++
-  endif
-  ifeq ($(origin AR), default)
-    AR = ar
-  endif
+  RESCOMP = windres
   TARGETDIR = bin/Release
   TARGET = $(TARGETDIR)/Schizle
   OBJDIR = obj/linux/Release
-  DEFINES += -DRELEASE
+  DEFINES += -DRELEASE -DUNIX
   INCLUDES +=
   FORCE_INCLUDE +=
   ALL_CPPFLAGS += $(CPPFLAGS) -MD -MP $(DEFINES) $(INCLUDES)
@@ -207,7 +175,7 @@ ifeq ($(config),release_linux)
   ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
   LIBS +=
   LDDEPS +=
-  ALL_LDFLAGS += $(LDFLAGS)
+  ALL_LDFLAGS += $(LDFLAGS) -s -lm
   LINKCMD = $(CC) -o "$@" $(OBJECTS) $(RESOURCES) $(ALL_LDFLAGS) $(LIBS)
   define PREBUILDCMDS
   endef

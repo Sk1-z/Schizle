@@ -77,7 +77,6 @@ size_t getIndex_ls(list_ls *list, char *string)
 {
     for (size_t i = 0; i < list->size; ++i)
     {
-        // printf("\n%s", list->data[i]);
         if (!strcmp(string, list->data[i]))
         {
             return i;

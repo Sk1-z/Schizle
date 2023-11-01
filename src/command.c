@@ -1,8 +1,8 @@
 #ifdef UNIX
 #include <unistd.h>
-#define DOSCRIPT printf("do_script current missing UNIX implementation. Coming soon.\n");
+#define DOSCRIPT printf("do_script currently missing UNIX implementation.\n");
 #define SLEEP(ms) sleep(ms)
-#elseifdef WINDOWS
+#elifdef WINDOWS
 #include <process.h>
 #include <windows.h>
 #define DOSCRIPT                                                                                                       \
@@ -55,7 +55,7 @@
 int pointNum = 1;
 
 #ifdef DEBUG
-#define PRINTTYPEDB(str) // printf("\n%s\n", str)
+#define PRINTTYPEDB(str) printf("\n%s\n", str)
 #define PRINT_POINT                                                                                                    \
     printf("\nPoint %d\n", pointNum);                                                                                  \
     pointNum++;
@@ -220,7 +220,7 @@ int main(int argc, char *argv[])
     if (exitCode)
     {
         THROW_ERROR(exitCode)
+        printf("\n");
     }
-    printf("\n");
     return 1;
 }

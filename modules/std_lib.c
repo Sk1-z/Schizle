@@ -22,7 +22,7 @@
     push_lui16(&(sout_sig.argID), 0);                                                                                  \
     sout_sig.call = sout;                                                                                              \
                                                                                                                        \
-    push_sig(&(ssl.functionSignatures), sout_sig);                                                                     \
+    push_sig(&(ssl.functionSignatures), &sout_sig);                                                                    \
     push_ls(&(ssl.functionNames), "sout");                                                                             \
                                                                                                                        \
     struct functionSig soutln_sig;                                                                                     \
@@ -31,7 +31,7 @@
     push_lui16(&(soutln_sig.argID), 0);                                                                                \
     soutln_sig.call = soutln;                                                                                          \
                                                                                                                        \
-    push_sig(&(ssl.functionSignatures), soutln_sig);                                                                   \
+    push_sig(&(ssl.functionSignatures), &soutln_sig);                                                                  \
     push_ls(&(ssl.functionNames), "soutln");                                                                           \
                                                                                                                        \
     struct functionSig sinln_sig;                                                                                      \
@@ -40,7 +40,7 @@
     push_lui16(&(sinln_sig.argID), 8);                                                                                 \
     sinln_sig.call = sinln;                                                                                            \
                                                                                                                        \
-    push_sig(&(ssl.functionSignatures), sinln_sig);                                                                    \
+    push_sig(&(ssl.functionSignatures), &sinln_sig);                                                                   \
     push_ls(&(ssl.functionNames), "sinln");                                                                            \
                                                                                                                        \
     struct functionSig text_to_frac_sig;                                                                               \
@@ -50,7 +50,7 @@
     push_lui16(&(text_to_frac_sig.argID), 9);                                                                          \
     text_to_frac_sig.call = text_to_frac;                                                                              \
                                                                                                                        \
-    push_sig(&(ssl.functionSignatures), text_to_frac_sig);                                                             \
+    push_sig(&(ssl.functionSignatures), &text_to_frac_sig);                                                            \
     push_ls(&(ssl.functionNames), "text_to_frac");                                                                     \
                                                                                                                        \
     struct functionSig text_to_int_sig;                                                                                \
@@ -60,7 +60,7 @@
     push_lui16(&(text_to_int_sig.argID), 9);                                                                           \
     text_to_int_sig.call = text_to_int;                                                                                \
                                                                                                                        \
-    push_sig(&(ssl.functionSignatures), text_to_int_sig);                                                              \
+    push_sig(&(ssl.functionSignatures), &text_to_int_sig);                                                             \
     push_ls(&(ssl.functionNames), "text_to_int");                                                                      \
                                                                                                                        \
     struct functionSig type_sig;                                                                                       \
@@ -70,7 +70,7 @@
     push_lui16(&(type_sig.argID), 0);                                                                                  \
     type_sig.call = type;                                                                                              \
                                                                                                                        \
-    push_sig(&(ssl.functionSignatures), type_sig);                                                                     \
+    push_sig(&(ssl.functionSignatures), &type_sig);                                                                    \
     push_ls(&(ssl.functionNames), "type");                                                                             \
                                                                                                                        \
     struct functionSig do_script_sig;                                                                                  \
@@ -79,7 +79,7 @@
     push_lui16(&(do_script_sig.argID), 9);                                                                             \
     do_script_sig.call = do_script;                                                                                    \
                                                                                                                        \
-    push_sig(&(ssl.functionSignatures), do_script_sig);                                                                \
+    push_sig(&(ssl.functionSignatures), &do_script_sig);                                                               \
     push_ls(&(ssl.functionNames), "do_script");                                                                        \
                                                                                                                        \
     struct functionSig timeout_sig;                                                                                    \
@@ -88,7 +88,7 @@
     push_lui16(&(timeout_sig.argID), 2);                                                                               \
     timeout_sig.call = timeout;                                                                                        \
                                                                                                                        \
-    push_sig(&(ssl.functionSignatures), timeout_sig);                                                                  \
+    push_sig(&(ssl.functionSignatures), &timeout_sig);                                                                 \
     push_ls(&(ssl.functionNames), "timeout");                                                                          \
                                                                                                                        \
     push_module(&modules, &ssl);

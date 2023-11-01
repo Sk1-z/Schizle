@@ -1,0 +1,7 @@
+get std as process
+
+!["../../intro.ski"]
+call @process::do_script
+
+!["\nHello from main\n"]
+call @process::sout
