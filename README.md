@@ -17,7 +17,7 @@ Create a file named first_program.ski and write the below into it
 ```
 _ Hello world program
 
-get "schizle standard library" as std
+get "std lib" as std
 end
 
 !["Hello world"]
