@@ -5,8 +5,6 @@ workspace "Schizle Script"
 configurations { "Debug", "Release" }
 platforms { "windows", "mac", "linux" }
 
-linkoptions { "-lm" }
-
 filter "configurations:Debug"
 defines { "DEBUG" }
 
@@ -18,10 +16,12 @@ defines { "WINDOWS" }
 system "windows"
 
 filter { "platforms:mac" }
+linkoptions { "-lm" }
 defines { "UNIX" }
 system "macosx"
 
 filter { "platforms:linux" }
+linkoptions { "-lm" }
 defines { "UNIX" }
 system "linux"
 

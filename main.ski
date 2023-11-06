@@ -4,4 +4,4 @@ get std as process
 call @process::do_script
 
 !["\nHello from main\n"]
-call @process::sout
+call @process::soutln

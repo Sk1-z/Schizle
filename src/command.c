@@ -1,6 +1,48 @@
 #ifdef UNIX
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
-#define DOSCRIPT printf("do_script currently missing UNIX implementation.\n");
+#define DOSCRIPT                                                                                                       \
+    pid_t child_pid;                                                                                                   \
+    int status;                                                                                                        \
+                                                                                                                       \
+    char command[CHARACTER_LIMIT];                                                                                     \
+    memset(command, 0, sizeof(command));                                                                               \
+                                                                                                                       \
+    if (get_lui16(&isStringArg, 0))                                                                                    \
+    {                                                                                                                  \
+        sprintf(command, "./Schizle %s", get_ls(&argBuf, 0));                                                          \
+    }                                                                                                                  \
+    else                                                                                                               \
+    {                                                                                                                  \
+        size_t index = getIndex_ls(&varBuf, get_ls(&argBuf, 0));                                                       \
+        if (index)                                                                                                     \
+        {                                                                                                              \
+            size_t *loc = getVarLookUp(&varTable, index);                                                              \
+            sprintf(command, "./Schizle %s", get_ls(&textVal, loc[1]));                                                \
+            free(loc);                                                                                                 \
+        }                                                                                                              \
+        else                                                                                                           \
+        {                                                                                                              \
+            return 22;                                                                                                 \
+        }                                                                                                              \
+    }                                                                                                                  \
+                                                                                                                       \
+    if ((child_pid = fork()) == 0)                                                                                     \
+    {                                                                                                                  \
+        char *args[] = {"sh", "-c", command, NULL};                                                                    \
+        execvp("sh", args);                                                                                            \
+        exit(0);                                                                                                       \
+    }                                                                                                                  \
+    else if (child_pid > 0)                                                                                            \
+    {                                                                                                                  \
+        waitpid(child_pid, &status, 0);                                                                                \
+    }                                                                                                                  \
+    else                                                                                                               \
+    {                                                                                                                  \
+        perror("Fork failed");                                                                                         \
+        return 1;                                                                                                      \
+    }
 #define SLEEP(ms) sleep(ms)
 #elifdef WINDOWS
 #include <process.h>
@@ -55,7 +97,7 @@
 int pointNum = 1;
 
 #ifdef DEBUG
-#define PRINTTYPEDB(str) printf("\n%s\n", str)
+#define PRINTTYPEDB(str) // printf("\n%s\n", str)
 #define PRINT_POINT                                                                                                    \
     printf("\nPoint %d\n", pointNum);                                                                                  \
     pointNum++;
