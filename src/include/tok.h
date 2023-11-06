@@ -33,6 +33,7 @@ token *tokenize(char *string)
 
     size_t strLen = strlen(string);
     size_t tokLen = 0;
+    char *word = NULL;
 
     char *wordStart = (char *)string;
 
@@ -49,7 +50,7 @@ token *tokenize(char *string)
             {
                 if (tokLen > 0)
                 {
-                    char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                    word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                     strncpy(word, wordStart, tokLen);
                     word[tokLen] = '\0';
                     push_ls(tok->toks, word);
@@ -63,7 +64,7 @@ token *tokenize(char *string)
             {
                 if (tokLen > 0)
                 {
-                    char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                    word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                     strncpy(word, wordStart, tokLen);
                     word[tokLen] = '\0';
                     push_ls(tok->toks, word);
@@ -79,7 +80,7 @@ token *tokenize(char *string)
                 {
                     if (tokLen > 0)
                     {
-                        char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                        word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                         strncpy(word, wordStart, tokLen);
                         word[tokLen] = '\0';
                         push_ls(tok->toks, word);
@@ -96,7 +97,7 @@ token *tokenize(char *string)
                 {
                     if (tokLen > 0)
                     {
-                        char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                        word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                         strncpy(word, wordStart, tokLen);
                         word[tokLen] = '\0';
                         push_ls(tok->toks, word);
@@ -115,7 +116,7 @@ token *tokenize(char *string)
                 {
                     if (tokLen > 0)
                     {
-                        char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                        word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                         strncpy(word, wordStart, tokLen);
                         word[tokLen] = '\0';
                         push_ls(tok->toks, word);
@@ -135,7 +136,7 @@ token *tokenize(char *string)
                 {
                     if (tokLen > 0)
                     {
-                        char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                        word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                         strncpy(word, wordStart, tokLen);
                         word[tokLen] = '\0';
                         push_ls(tok->toks, word);
@@ -152,7 +153,7 @@ token *tokenize(char *string)
                 {
                     if (tokLen > 0)
                     {
-                        char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                        word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                         strncpy(word, wordStart, tokLen);
                         word[tokLen] = '\0';
                         push_ls(tok->toks, word);
@@ -174,7 +175,7 @@ token *tokenize(char *string)
                     {
                         if (tokLen > 0)
                         {
-                            char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                            word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                             strncpy(word, wordStart, tokLen);
                             word[tokLen] = '\0';
                             push_ls(tok->toks, word);
@@ -193,7 +194,7 @@ token *tokenize(char *string)
             {
                 if (tokLen > 0)
                 {
-                    char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                    word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                     strncpy(word, wordStart, tokLen);
                     word[tokLen] = '\0';
                     push_ls(tok->toks, word);
@@ -209,7 +210,7 @@ token *tokenize(char *string)
             {
                 if (tokLen > 0)
                 {
-                    char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                    word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                     strncpy(word, wordStart, tokLen);
                     word[tokLen] = '\0';
                     push_ls(tok->toks, word);
@@ -242,7 +243,7 @@ token *tokenize(char *string)
                 // }
                 if (tokLen > 0)
                 {
-                    char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                    word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                     strncpy(word, wordStart, tokLen);
                     word[tokLen] = '\0';
                     push_ls(tok->toks, word);
@@ -276,7 +277,7 @@ token *tokenize(char *string)
                     }
                 }
 
-                char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                 strncpy(word, wordStart, tokLen);
                 word[tokLen] = '\0';
                 push_ls(tok->toks, word);
@@ -287,7 +288,7 @@ token *tokenize(char *string)
             {
                 if (tokLen > 0)
                 {
-                    char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                    word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                     strncpy(word, wordStart, tokLen);
                     word[tokLen] = '\0';
                     push_ls(tok->toks, word);
@@ -321,7 +322,7 @@ token *tokenize(char *string)
                     }
                 }
 
-                char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                 strncpy(word, wordStart, tokLen);
                 word[tokLen] = '\0';
                 push_ls(tok->toks, word);
@@ -354,7 +355,7 @@ token *tokenize(char *string)
                     tokLen++;
                 }
 
-                char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                 strncpy(word, wordStart, tokLen);
                 word[tokLen] = '\0';
                 push_ls(tok->toks, word);
@@ -388,7 +389,7 @@ token *tokenize(char *string)
                     tokLen++;
                 }
 
-                char *word = (char *)malloc((tokLen + 1) * sizeof(char));
+                word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
                 strncpy(word, wordStart, tokLen);
                 word[tokLen] = '\0';
                 push_ls(tok->toks, word);
@@ -455,6 +456,8 @@ token *tokenize(char *string)
     {
         push_ls(tok->toks, "\n");
     }
+
+    free(word);
 
     return tok;
 }

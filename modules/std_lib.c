@@ -9,8 +9,8 @@
     pushBool_lui16(&(varMut), FALSE);                                                                                  \
     pushBool_lui16(&(varDef), TRUE);                                                                                   \
                                                                                                                        \
-    push_ls(&(modules.moduleNames), name);                                                                             \
-    push_lui16(&(modules.moduleID), 1);                                                                                \
+    push_ls(&moduleNames, name);                                                                                       \
+    push_lui16(&moduleID, 1);                                                                                          \
                                                                                                                        \
     struct module ssl;                                                                                                 \
     init_lsig(&(ssl.functionSignatures));                                                                              \
@@ -91,7 +91,8 @@
     push_sig(&(ssl.functionSignatures), &timeout_sig);                                                                 \
     push_ls(&(ssl.functionNames), "timeout");                                                                          \
                                                                                                                        \
-    push_module(&modules, &ssl);
+    modules[modCount] = ssl;                                                                                           \
+    modCount++;
 
 // Standard out
 size_t sout()
@@ -356,10 +357,10 @@ size_t type()
 
 size_t do_script()
 {
-    // printf("the function 'do_script'uis deprecated, there is currently no
+    // printf("the function 'do_script' is deprecated, there is currently no
     // alternative\n");
 
-    // I cheated  return 0;
+    // I cheated, thanks Chad.
     DOSCRIPT
     return 0;
 }

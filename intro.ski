@@ -1,3 +1,11 @@
-get std 
-!["Hello world"]
-call @std::sout
+get std
+get skext
+
+!myNum = "This is not a number goofball"
+!var: text
+
+![var, "Mynum: $myNum"]
+call @skext::replace
+
+![var]
+call @std::soutln

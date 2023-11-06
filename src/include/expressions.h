@@ -4,8 +4,6 @@
 
 #include "program.h"
 
-#define EMPTY "KW_EMPTY"
-
 long long pow_ll(long long base, long long exp)
 {
     long long r = base;
@@ -348,7 +346,8 @@ long long eval_ll(size_t *exitCode, char *expr)
 
         for (size_t i = 0; i < expr_ls->size; i++)
         {
-            if (!strcmp(get_ls(expr_ls, i), "KW_PROD") || !strcmp(get_ls(expr_ls, i), "KW_DIV") || !strcmp(get_ls(expr_ls, i), "KW_MOD"))
+            if (!strcmp(get_ls(expr_ls, i), "KW_PROD") || !strcmp(get_ls(expr_ls, i), "KW_DIV") ||
+                !strcmp(get_ls(expr_ls, i), "KW_MOD"))
             {
                 power = 1;
 
@@ -613,7 +612,8 @@ double eval_dbl(size_t *exitCode, char *expr)
 
         for (size_t i = 0; i < expr_ls->size; i++)
         {
-            if (!strcmp(get_ls(expr_ls, i), "KW_PROD") || !strcmp(get_ls(expr_ls, i), "KW_DIV") || !strcmp(get_ls(expr_ls, i), "KW_MOD"))
+            if (!strcmp(get_ls(expr_ls, i), "KW_PROD") || !strcmp(get_ls(expr_ls, i), "KW_DIV") ||
+                !strcmp(get_ls(expr_ls, i), "KW_MOD"))
             {
                 power = 1;
 

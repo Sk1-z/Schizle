@@ -47,6 +47,7 @@ void push_ls(list_ls *list, char *val)
         list->data = (char **)realloc(list->data, list->capacity * sizeof(char *));
     }
     list->data[list->size] = (char *)malloc((strlen(val) + 1) * sizeof(char *));
+    memset(list->data[list->size], '\0', strlen(val) + 1);
     strcpy(list->data[list->size], val);
     list->size++;
 }
@@ -75,8 +76,10 @@ size_t getSize_ls(list_ls *list)
 
 size_t getIndex_ls(list_ls *list, char *string)
 {
+    // printf("\n");
     for (size_t i = 0; i < list->size; ++i)
     {
+        // printf("compare: %s to: %s\n", string, list->data[i]);
         if (!strcmp(string, list->data[i]))
         {
             return i;

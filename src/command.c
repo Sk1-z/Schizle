@@ -1,3 +1,16 @@
+int pointNum = 1;
+
+#ifdef DEBUG
+#define PRINTTYPEDB(str) // printf("\n%s\n", str)
+#define PRINT_POINT                                                                                                    \
+    printf("\nPoint %d\n", pointNum);                                                                                  \
+    pointNum++;
+#define _CRT_SECURE_NO_WARNINGS
+#else
+#define PRINTTYPEDB(str)
+#define PRINT_POINT
+#endif
+
 #ifdef UNIX
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -94,18 +107,7 @@
            "alternative\n");
 #endif
 
-int pointNum = 1;
-
-#ifdef DEBUG
-#define PRINTTYPEDB(str) // printf("\n%s\n", str)
-#define PRINT_POINT                                                                                                    \
-    printf("\nPoint %d\n", pointNum);                                                                                  \
-    pointNum++;
-#define _CRT_SECURE_NO_WARNINGS
-#else
-#define PRINTTYPEDB(str)
-#define PRINT_POINT
-#endif
+#define EMPTY "KW_EMPTY"
 
 #include <stdio.h>
 #include <string.h>

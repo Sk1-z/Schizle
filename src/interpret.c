@@ -79,6 +79,24 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                         }
                         PRINTTYPEDB("got ssl");
                     }
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 1), "skext"))
+                    {
+                        CHECK_MODULE(2)
+
+                        if (getLineSize(&fline) < 4)
+                        {
+                            GET_SKEXT(get_ls(fline.ftoken->toks, 1))
+                        }
+                        else
+                        {
+                            if (strcmp(get_ls(fline.ftoken->toks, 2), "KW_ALIAS"))
+                            {
+                                I_ERROR(10)
+                            }
+                            GET_SKEXT(get_ls(fline.ftoken->toks, 3))
+                        }
+                        PRINTTYPEDB("got skext");
+                    }
                     else
                     {
                         I_ERROR(11)
@@ -1035,13 +1053,13 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                         I_ERROR(26)
                     }
 
-                    modIndex = getIndex_ls(&(modules.moduleNames), get_ls(fline.ftoken->toks, 2));
+                    modIndex = getIndex_ls(&moduleNames, get_ls(fline.ftoken->toks, 2));
 
-                    if (modIndex || !strcmp(get_ls(fline.ftoken->toks, 2), get_ls(&(modules.moduleNames), 0)))
+                    if (modIndex || !strcmp(get_ls(fline.ftoken->toks, 2), get_ls(&moduleNames, 0)))
                     {
-                        struct module *module = get_module(&modules, modIndex);
-                        // printf("\n%d %s\nindex: %s i: %zu\n", modules.data[0]->functionNames.size,
-                        //        get_ls(fline.ftoken->toks, 4), module->functionNames.data[1], modIndex);
+                        struct module *module = &modules[modIndex];
+                        // printf("\n%d %s\nindex: %s i: %zu\n", modules[1].functionNames.size,
+                        //        get_ls(fline.ftoken->toks, 4), module->functionNames.data[0], modIndex);
                         size_t funcI = getIndex_ls(&(module->functionNames), get_ls(fline.ftoken->toks, 4));
                         // printf("\n%d %s\nindex: %s i: %zu\n", modules.data[0]->functionNames.size,
                         //        get_ls(fline.ftoken->toks, 4), module->functionNames.data[1], funcI);
@@ -1174,10 +1192,12 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                     }
                     else
                     {
+                        I_ERROR(11)
                     }
                 }
                 else
                 {
+                    I_ERROR(26)
                 }
 
                 paramInit = 0;

@@ -76,13 +76,16 @@ list_lsi64 int64Val;
 list_lf32 fracVal;
 list_ld64 frac64Val;
 list_ls textVal;
-// Member list
-struct module_data modules;
+// Mod list
+size_t modCount = 0;
+struct module modules[8];
+list_ls moduleNames;
+list_lui16 moduleID;
 
 #define CHECK_MODULE(modID)                                                                                            \
-    for (size_t i = 0; i < modules.moduleID.size; i++)                                                                 \
+    for (size_t i = 0; i < moduleID.size; i++)                                                                         \
     {                                                                                                                  \
-        if (get_lui16(&(modules.moduleID), i) == modID)                                                                \
+        if (get_lui16(&moduleID, i) == modID)                                                                          \
         {                                                                                                              \
             I_ERROR(9)                                                                                                 \
         }                                                                                                              \
@@ -317,7 +320,6 @@ size_t autoType(size_t i)
     init_lf32(&fracVal);                                                                                               \
     init_ld64(&frac64Val);                                                                                             \
     init_ls(&textVal);                                                                                                 \
-    init_ls(&textVal);                                                                                                 \
                                                                                                                        \
     push_ls(&varBuf, "_NAME_");                                                                                        \
     pushTable(&varTable, 8, textVal.size);                                                                             \
@@ -343,16 +345,15 @@ size_t autoType(size_t i)
     pushBool_lui16(&(varMut), FALSE);                                                                                  \
     pushBool_lui16(&(varDef), TRUE);                                                                                   \
                                                                                                                        \
-    init_ls(&(modules.moduleNames));                                                                                   \
-    init_lui16(&(modules.moduleID));                                                                                   \
+    init_ls(&moduleNames);                                                                                             \
+    init_lui16(&moduleID);                                                                                             \
                                                                                                                        \
-    // struct module main;                                                                                                \
-    // push_ls(&(modules.moduleNames), "MAIN");                                                                           \
-    // push_lui16(&(modules.moduleID), 0);                                                                                \
-    // init_ls(&(main.functionNames));                                                                                    \
-    // init_lsig(&(main.functionSignatures));                                                                             \
-    // push_module(&(modules), &main); \
-    //
+    struct module main;                                                                                                \
+    push_ls(&moduleNames, "MAIN");                                                                                     \
+    push_lui16(&moduleID, 0);                                                                                          \
+    modules[0] = main;                                                                                                 \
+    modCount++;
+
 #define FREE_PROGRAM                                                                                                   \
     free_ls(&varBuf);                                                                                                  \
     freeTable(&varTable);                                                                                              \
@@ -362,10 +363,10 @@ size_t autoType(size_t i)
     free_lui16(&isStringArg);                                                                                          \
     free_lui16(&typeArg);                                                                                              \
                                                                                                                        \
+    freeOffsets(&(fline.offsets));                                                                                     \
     free_lsi32(&loopOffsets);                                                                                          \
     free_lsi32(&loopLineNum);                                                                                          \
     free_lui16(&isLoop);                                                                                               \
-    freeOffsets(&(fline.offsets));                                                                                     \
                                                                                                                        \
     free_lui16(&stateVal);                                                                                             \
     free_lui16(&natVal);                                                                                               \
@@ -376,5 +377,11 @@ size_t autoType(size_t i)
     free_ld64(&frac64Val);                                                                                             \
     free_ls(&textVal);                                                                                                 \
                                                                                                                        \
-    freeModules(&modules);                                                                                             \
+    free_ls(&moduleNames);                                                                                             \
+    free_lui16(&moduleID);                                                                                             \
+    for (size_t i = 1; i < modCount - 1; i++)                                                                          \
+    {                                                                                                                  \
+        free_ls(&(modules[i].functionNames));                                                                          \
+        free_lsig(&(modules[i].functionSignatures));                                                                   \
+    }                                                                                                                  \
     // printf("\ndone\n");

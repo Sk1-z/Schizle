@@ -63,44 +63,13 @@ struct module
     list_functionSig functionSignatures;
 };
 
-struct module_data
+void freeModules(struct module list[], size_t count)
 {
-    list_ls moduleNames;
-    list_lui16 moduleID;
-    struct module **data;
-    size_t size;
-    size_t capacity;
-};
-
-void init_lmod(struct module_data *list)
-{
-    init_ls(&(list->moduleNames));
-    init_lui16(&(list->moduleID));
-    list->data = (struct module **)malloc(16 * sizeof(struct module *));
-    list->size = 0;
-    list->capacity = 16;
-}
-
-struct module *get_module(struct module_data *list, size_t i)
-{
-    return list->data[i];
-}
-
-void push_module(struct module_data *list, struct module *val)
-{
-    if (list->size == list->capacity)
+    for (size_t i = 0; i < count; i++)
     {
-        list->capacity = (size_t)((double)list->capacity * 1.5 + 1);
-        list->data = (struct module **)realloc(list->data, list->capacity * sizeof(struct module *));
+        free_ls(&(list[i].functionNames));
+        free_lsig(&(list[i].functionSignatures));
     }
-    list->data[list->size] = val;
-    list->size++;
-}
-
-void freeModules(struct module_data *list)
-{
-    free_ls(&(list->moduleNames));
-    free_lui16(&(list->moduleID));
     // printf("\nList size: %zu\n", list->size);
     // for (int i = 0; i < list->size; i++)
     // {
