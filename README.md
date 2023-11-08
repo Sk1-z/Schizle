@@ -6,7 +6,7 @@
 
 Schizle is an *In-progress* Lightweight scripting language with builtin support for compilation into executables written in pure ANSI C with the objective of being simple ,easy to learn, and lightweight.
 <br>
-**Current release: 0.4.0**
+**Current release: 0.4.1**
 <!--
 ## Getting started
 
@@ -26,8 +26,7 @@ call @std::sout
 or if you want something simpler
 ```
 get std
-!["Hello world"]
-call @std::sout
+!["Hello world"] >> @std::sout
 ```
 Then run the following command with Schizle.exe in the same directory, or use the relative path.
 ```
