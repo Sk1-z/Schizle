@@ -28,7 +28,7 @@ or if you want something simpler
 get std
 !["Hello world"] >> @std::sout
 ```
-Then run the following command with Schizle.exe in the same directory, or use the relative path.
+Then run the following command with the Schizle binary for your platform in the same directory, or on the path.
 ```
 Schizle first_program.ski
 ```
