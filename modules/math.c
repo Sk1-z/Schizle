@@ -43,7 +43,7 @@
     struct functionSig floor_sig;                                                                                      \
     init_sig(&floor_sig);                                                                                              \
     floor_sig.numArgs = 1;                                                                                             \
-    push_lui16(&(floor_sig.argID), 5);                                                                                 \
+    push_lui16(&(floor_sig.argID), 7);                                                                                 \
     floor_sig.call = _floor;                                                                                           \
                                                                                                                        \
     push_sig(&(std.functionSignatures), &floor_sig);                                                                   \
@@ -52,7 +52,7 @@
     struct functionSig ceil_sig;                                                                                       \
     init_sig(&ceil_sig);                                                                                               \
     ceil_sig.numArgs = 1;                                                                                              \
-    push_lui16(&(ceil_sig.argID), 5);                                                                                  \
+    push_lui16(&(ceil_sig.argID), 7);                                                                                  \
     ceil_sig.call = _ceil;                                                                                             \
                                                                                                                        \
     push_sig(&(std.functionSignatures), &ceil_sig);                                                                    \
@@ -61,7 +61,7 @@
     struct functionSig ln_sig;                                                                                         \
     init_sig(&ln_sig);                                                                                                 \
     ln_sig.numArgs = 1;                                                                                                \
-    push_lui16(&(ln_sig.argID), 8);                                                                                    \
+    push_lui16(&(ln_sig.argID), 7);                                                                                    \
     ln_sig.call = ln;                                                                                                  \
                                                                                                                        \
     push_sig(&(std.functionSignatures), &ln_sig);                                                                      \
@@ -69,9 +69,8 @@
                                                                                                                        \
     struct functionSig log10_sig;                                                                                      \
     init_sig(&log10_sig);                                                                                              \
-    log10_sig.numArgs = 2;                                                                                             \
+    log10_sig.numArgs = 1;                                                                                             \
     push_lui16(&(log10_sig.argID), 7);                                                                                 \
-    push_lui16(&(log10_sig.argID), 9);                                                                                 \
     log10_sig.call = _log10;                                                                                           \
                                                                                                                        \
     push_sig(&(std.functionSignatures), &log10_sig);                                                                   \
@@ -79,9 +78,8 @@
                                                                                                                        \
     struct functionSig sin_sig;                                                                                        \
     init_sig(&sin_sig);                                                                                                \
-    sin_sig.numArgs = 2;                                                                                               \
-    push_lui16(&(sin_sig.argID), 5);                                                                                   \
-    push_lui16(&(sin_sig.argID), 9);                                                                                   \
+    sin_sig.numArgs = 1;                                                                                               \
+    push_lui16(&(sin_sig.argID), 7);                                                                                   \
     sin_sig.call = _sin;                                                                                               \
                                                                                                                        \
     push_sig(&(std.functionSignatures), &sin_sig);                                                                     \
@@ -89,8 +87,7 @@
                                                                                                                        \
     struct functionSig cos_sig;                                                                                        \
     init_sig(&cos_sig);                                                                                                \
-    cos_sig.numArgs = 2;                                                                                               \
-    push_lui16(&(cos_sig.argID), 5);                                                                                   \
+    cos_sig.numArgs = 1;                                                                                               \
     push_lui16(&(cos_sig.argID), 7);                                                                                   \
     cos_sig.call = _cos;                                                                                               \
                                                                                                                        \

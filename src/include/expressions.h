@@ -1075,6 +1075,12 @@ int cond(size_t *exitCode, char *expr)
 
     expr_ls = shrinkExp(expr_ls);
 
+    // for (size_t i = 0; i < expr_ls->size; i++)
+    // {
+    //     printf("\n%s", get_ls(expr_ls, i));
+    // }
+    // printf("\n");
+
     for (size_t i = 0; i < expr_ls->size; i++)
     {
         if (!strcmp(get_ls(expr_ls, i), "KW_EVAL_BLOCK"))
@@ -1104,6 +1110,7 @@ int cond(size_t *exitCode, char *expr)
                 sprintf(doubleAsString, "%lf", eval_dbl(exitCode, get_ls(expr_ls, i + 1)));
                 if (*exitCode)
                 {
+                    // printf("not cool man");
                     return 0;
                 }
                 set_ls(expr_ls, i + 1, doubleAsString);
@@ -1123,6 +1130,12 @@ int cond(size_t *exitCode, char *expr)
 
     expr_ls = shrinkExp(expr_ls);
 
+    // for (size_t i = 0; i < expr_ls->size; i++)
+    // {
+    //     printf("\n%s", get_ls(expr_ls, i));
+    // }
+    // printf("\n");
+
     for (size_t i = 0; i < expr_ls->size; i++)
     {
         if (!strcmp(get_ls(expr_ls, i), "KW_INTERP"))
@@ -1141,39 +1154,53 @@ int cond(size_t *exitCode, char *expr)
                 loc = getVarLookUp(&varTable, index);
 
                 set_ls(expr_ls, i, EMPTY);
-                char numStr[19];
-                long long num;
+                char numStr[310];
+                long long ll = 0;
+                double d = 0;
 
                 switch (loc[0])
                 {
                 case 1:
                     if (GET_STATE(loc[1]))
                     {
-                        num = 1;
+                        ll = 1;
                     }
                     else
                     {
-                        num = 0;
+                        ll = 0;
                     }
                     break;
                 case 2:
-                    num = (long long)GET_NAT(loc[1]);
+                    ll = (long long)GET_NAT(loc[1]);
                     break;
                 case 3:
-                    num = (long long)GET_NAT64(loc[1]);
+                    ll = (long long)GET_NAT64(loc[1]);
                     break;
                 case 4:
-                    num = (long long)GET_INT(loc[1]);
+                    ll = (long long)GET_INT(loc[1]);
                     break;
                 case 5:
-                    num = (long long)GET_INT64(loc[1]);
+                    ll = (long long)GET_INT64(loc[1]);
+                    break;
+                case 6:
+                    d = (double)GET_FRAC(loc[1]);
+                    break;
+                case 7:
+                    d = GET_FRAC64(loc[1]);
                     break;
                 default:
                     *exitCode = 1;
                     return 0;
                 }
 
-                sprintf(numStr, "%lld", num);
+                if (d)
+                {
+                    sprintf(numStr, "%lf", d);
+                }
+                else
+                {
+                    sprintf(numStr, "%lld", ll);
+                }
                 set_ls(expr_ls, i + 1, numStr);
 
                 free(loc);
@@ -1187,6 +1214,12 @@ int cond(size_t *exitCode, char *expr)
     }
 
     expr_ls = shrinkExp(expr_ls);
+
+    // for (size_t i = 0; i < expr_ls->size; i++)
+    // {
+    //     printf("\n%s", get_ls(expr_ls, i));
+    // }
+    // printf("\n");
 
     char *end;
 
@@ -1206,8 +1239,8 @@ int cond(size_t *exitCode, char *expr)
                     return 0;
                 }
 
-                long long a = strtoll(get_ls(expr_ls, i - 1), &end, 10);
-                long long b = strtoll(get_ls(expr_ls, i + 1), &end, 10);
+                double a = strtod(get_ls(expr_ls, i - 1), &end);
+                double b = strtod(get_ls(expr_ls, i + 1), &end);
 
                 if (*end != '\0')
                 {
@@ -1290,8 +1323,8 @@ int cond(size_t *exitCode, char *expr)
                     return 0;
                 }
 
-                long long a = strtoll(get_ls(expr_ls, i - 1), &end, 10);
-                long long b = strtoll(get_ls(expr_ls, i + 1), &end, 10);
+                double a = strtod(get_ls(expr_ls, i - 1), &end);
+                double b = strtod(get_ls(expr_ls, i + 1), &end);
 
                 if (*end != '\0')
                 {
@@ -1332,8 +1365,8 @@ int cond(size_t *exitCode, char *expr)
                     return 0;
                 }
 
-                long long a = strtoll(get_ls(expr_ls, i - 1), &end, 10);
-                long long b = strtoll(get_ls(expr_ls, i + 1), &end, 10);
+                double a = strtod(get_ls(expr_ls, i - 1), &end);
+                double b = strtod(get_ls(expr_ls, i + 1), &end);
 
                 if (*end != '\0')
                 {
@@ -1374,8 +1407,8 @@ int cond(size_t *exitCode, char *expr)
                     return 0;
                 }
 
-                long long a = strtoll(get_ls(expr_ls, i - 1), &end, 10);
-                long long b = strtoll(get_ls(expr_ls, i + 1), &end, 10);
+                double a = strtod(get_ls(expr_ls, i - 1), &end);
+                double b = strtod(get_ls(expr_ls, i + 1), &end);
 
                 if (*end != '\0')
                 {
@@ -1416,8 +1449,8 @@ int cond(size_t *exitCode, char *expr)
                     return 0;
                 }
 
-                long long a = strtoll(get_ls(expr_ls, i - 1), &end, 10);
-                long long b = strtoll(get_ls(expr_ls, i + 1), &end, 10);
+                double a = strtod(get_ls(expr_ls, i - 1), &end);
+                double b = strtod(get_ls(expr_ls, i + 1), &end);
 
                 if (*end != '\0')
                 {

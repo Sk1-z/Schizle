@@ -293,6 +293,7 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                         {
                             falseExp = 0;
                             falseIf = 0;
+                            controlDone = 0;
                         }
                     }
 
@@ -538,8 +539,9 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
             }
             else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_LOOP"))
             {
-                // printf("nest: %d lnest: %d clnest: %d loop#: %d oSize: %zu", nest, loopNest, currentLoopNest,
-                // loopNum, loopOffsets.size);
+                // printf("nest: %d lnest: %d clnest: %d loop#: %d oSize: %zu\n", nest, loopNest, currentLoopNest,
+                // loopNum,
+                //        loopOffsets.size);
                 nest++;
 
                 if (isLoop.size == nest - 1)
