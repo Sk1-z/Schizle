@@ -1,8 +1,5 @@
 #pragma once
 
-#include <stdlib.h>
-#include <ctype.h>
-
 #define _NAT16_LIMIT_ 0xffff
 #define _NAT64_LIMIT_ 0xffffffffffffffff
 #define _INT32_LIMIT_ 0x0fffffff

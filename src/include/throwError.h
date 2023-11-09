@@ -2,6 +2,7 @@
 
 void throwError(int errorNum, int argc, char **argv, int lineNum)
 {
+    printf("\n");
     char *fileName;
     switch (argc)
     {
@@ -98,6 +99,15 @@ void throwError(int errorNum, int argc, char **argv, int lineNum)
         break;
     case 28:
         wrongNumberOfArgs(fileName, lineNum);
+        break;
+    case 29:
+        invalidPathAlt(fileName, lineNum);
+        break;
+    case 30:
+        fileAccess(fileName, lineNum);
+        break;
+    case 31:
+        duplicateFile(fileName, lineNum);
         break;
     }
 }

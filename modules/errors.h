@@ -174,3 +174,21 @@ void wrongNumberOfArgs(char *file, int line)
 {
     printf("%s %d | ERROR: incorrect number of args", file, line);
 }
+
+// 29
+void invalidPathAlt(char *file, int line)
+{
+    printf("%s %d | ERROR: file does not exist at path", file, line);
+}
+
+// 30
+void fileAccess(char *file, int line)
+{
+    printf("%s %d | ERROR: file could not be accessed", file, line);
+}
+
+// 31
+void duplicateFile(char *file, int line)
+{
+    printf("%s %d | ERROR: file already exists", file, line);
+}

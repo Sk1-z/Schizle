@@ -2,9 +2,6 @@
 
 #include "lists.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-
 struct functionSig
 {
     size_t numArgs;

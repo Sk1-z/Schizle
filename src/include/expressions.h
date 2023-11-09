@@ -1,7 +1,5 @@
 #pragma once
 
-#include <math.h>
-
 #include "program.h"
 
 long long pow_ll(long long base, long long exp)
@@ -542,10 +540,10 @@ double eval_dbl(size_t *exitCode, char *expr)
                 switch (loc[0])
                 {
                 case 6:
-                    sprintf(doubleAsString, "%f", (double)GET_NAT(loc[1]));
+                    sprintf(doubleAsString, "%f", (double)GET_FRAC(loc[1]));
                     break;
                 case 7:
-                    sprintf(doubleAsString, "%lf", (double)GET_NAT64(loc[1]));
+                    sprintf(doubleAsString, "%lf", (double)GET_FRAC64(loc[1]));
                     break;
                 default:
                     *exitCode = 1;
@@ -661,8 +659,21 @@ double eval_dbl(size_t *exitCode, char *expr)
                 }
                 else if (!strcmp(get_ls(expr_ls, i), "KW_MOD"))
                 {
-                    *exitCode = 1;
-                    return 0;
+                    double dividend = strtod(get_ls(expr_ls, i - 1), &end);
+                    double divisor = strtod(get_ls(expr_ls, i + 1), &end);
+
+                    if (*end != '\0')
+                    {
+                        *exitCode = 1;
+                        return 0;
+                    }
+
+                    char doubleAsString[310];
+                    sprintf(doubleAsString, "%lf", fmod(dividend, divisor));
+
+                    set_ls(expr_ls, i - 1, EMPTY);
+                    set_ls(expr_ls, i + 1, EMPTY);
+                    set_ls(expr_ls, i, doubleAsString);
                 }
 
                 expr_ls = shrinkExp(expr_ls);

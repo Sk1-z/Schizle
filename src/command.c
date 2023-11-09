@@ -20,7 +20,7 @@ int pointNum = 1;
     int status;                                                                                                        \
                                                                                                                        \
     char command[CHARACTER_LIMIT];                                                                                     \
-    memset(command, 0, sizeof(command));                                                                               \
+    memset(command, '\0', sizeof(command));                                                                            \
                                                                                                                        \
     if (get_lui16(&isStringArg, 0))                                                                                    \
     {                                                                                                                  \
@@ -28,17 +28,9 @@ int pointNum = 1;
     }                                                                                                                  \
     else                                                                                                               \
     {                                                                                                                  \
-        size_t index = getIndex_ls(&varBuf, get_ls(&argBuf, 0));                                                       \
-        if (index)                                                                                                     \
-        {                                                                                                              \
-            size_t *loc = getVarLookUp(&varTable, index);                                                              \
-            sprintf(command, "./Schizle %s", get_ls(&textVal, loc[1]));                                                \
-            free(loc);                                                                                                 \
-        }                                                                                                              \
-        else                                                                                                           \
-        {                                                                                                              \
-            return 22;                                                                                                 \
-        }                                                                                                              \
+        size_t *loc = getVarLookUp(&varTable, getIndex_ls(&varBuf, get_ls(&argBuf, 0)));                               \
+        sprintf(command, "./Schizle %s",                                                                               \
+                get_ls(&textVal, getVarLookUp(&varTable, getIndex_ls(&varBuf, get_ls(&argBuf, 0)))[1]));               \
     }                                                                                                                  \
                                                                                                                        \
     if ((child_pid = fork()) == 0)                                                                                     \
@@ -50,13 +42,12 @@ int pointNum = 1;
     else if (child_pid > 0)                                                                                            \
     {                                                                                                                  \
         waitpid(child_pid, &status, 0);                                                                                \
-    }                                                                                                                  \
-    else                                                                                                               \
-    {                                                                                                                  \
-        perror("Fork failed");                                                                                         \
-        return 1;                                                                                                      \
     }
 #define SLEEP(ms) sleep(ms)
+#define END                                                                                                            \
+    printf("\n");                                                                                                      \
+    0;
+#define SYSTEM "UNIX"
 #elifdef WINDOWS
 #include <process.h>
 #include <windows.h>
@@ -73,31 +64,22 @@ int pointNum = 1;
     if (get_lui16(&isStringArg, 0))                                                                                    \
     {                                                                                                                  \
         sprintf(command, "schizle %s", get_ls(&argBuf, 0));                                                            \
-        CreateProcess(NULL, command, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);                                      \
     }                                                                                                                  \
     else                                                                                                               \
     {                                                                                                                  \
-        size_t index = getIndex_ls(&varBuf, get_ls(&argBuf, 0));                                                       \
-                                                                                                                       \
-        if (index)                                                                                                     \
-        {                                                                                                              \
-            size_t *loc = getVarLookUp(&varTable, index);                                                              \
-                                                                                                                       \
-            sprintf(command, "schizle %s", get_ls(&textVal, loc[1]));                                                  \
-            CreateProcess(NULL, command, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);                                  \
-            free(loc);                                                                                                 \
-        }                                                                                                              \
-        else                                                                                                           \
-        {                                                                                                              \
-            return 22;                                                                                                 \
-        }                                                                                                              \
+        sprintf(command, "schizle %s",                                                                                 \
+                get_ls(&textVal, getVarLookUp(&varTable, getIndex_ls(&varBuf, get_ls(&argBuf, 0)))[1]));               \
     }                                                                                                                  \
+                                                                                                                       \
+    CreateProcess(NULL, command, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);                                          \
                                                                                                                        \
     WaitForSingleObject(pi.hProcess, INFINITE);                                                                        \
                                                                                                                        \
     CloseHandle(pi.hProcess);                                                                                          \
     CloseHandle(pi.hThread);
 #define SLEEP(ms) Sleep(ms)
+#define END 0;
+#define SYSTEM "WINDOWS"
 #else
 #define DOSCRIPT                                                                                                       \
     printf("the function 'do_script' is deprecated, there is currently no "                                            \
@@ -105,12 +87,11 @@ int pointNum = 1;
 #define SLEEP(ms)                                                                                                      \
     printf("the function 'timeout' is deprecated, there is currently no "                                              \
            "alternative\n");
+#define END 0;
+#define SYSTEM "UNKNOWN"
 #endif
 
 #define EMPTY "KW_EMPTY"
-
-#include <stdio.h>
-#include <string.h>
 
 #include "../modules/export.h"
 #include "include/program.h"
@@ -231,7 +212,7 @@ int main(int argc, char *argv[])
                 if (!strcmp(argv[3], "-c") || !strcmp(argv[3], "-g") || !strcmp(argv[3], "-t") ||
                     !strcmp(argv[3], "-v"))
                 {
-                    printf("imagine it got built");
+                    printf("Schizle -b missing implementation.");
                 }
                 else
                 {
@@ -240,7 +221,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                printf("imagine it got built");
+                printf("Schizle -b missing implementation.");
             }
         }
     }
@@ -264,7 +245,7 @@ int main(int argc, char *argv[])
     if (exitCode)
     {
         THROW_ERROR(exitCode)
-        printf("\n");
     }
-    return 1;
+
+    END
 }

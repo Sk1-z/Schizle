@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "include/expressions.h"
 #include "include/module.h"
 #include "include/program.h"
@@ -77,11 +73,45 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                             }
                             GET_STD(get_ls(fline.ftoken->toks, 3))
                         }
-                        PRINTTYPEDB("got ssl");
+                    }
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 1), "system"))
+                    {
+                        CHECK_MODULE(2)
+
+                        if (getLineSize(&fline) < 4)
+                        {
+                            GET_SYSTEM(get_ls(fline.ftoken->toks, 1))
+                        }
+                        else
+                        {
+                            if (strcmp(get_ls(fline.ftoken->toks, 2), "KW_ALIAS"))
+                            {
+                                I_ERROR(10)
+                            }
+                            GET_SYSTEM(get_ls(fline.ftoken->toks, 3))
+                        }
+                    }
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 1), "file") ||
+                             !strcmp(get_ls(fline.ftoken->toks, 1), "file_stream"))
+                    {
+                        CHECK_MODULE(3)
+
+                        if (getLineSize(&fline) < 4)
+                        {
+                            GET_FILE(get_ls(fline.ftoken->toks, 1))
+                        }
+                        else
+                        {
+                            if (strcmp(get_ls(fline.ftoken->toks, 2), "KW_ALIAS"))
+                            {
+                                I_ERROR(10)
+                            }
+                            GET_FILE(get_ls(fline.ftoken->toks, 3));
+                        }
                     }
                     else if (!strcmp(get_ls(fline.ftoken->toks, 1), "skext"))
                     {
-                        CHECK_MODULE(2)
+                        CHECK_MODULE(4)
 
                         if (getLineSize(&fline) < 4)
                         {
@@ -95,7 +125,23 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                             }
                             GET_SKEXT(get_ls(fline.ftoken->toks, 3))
                         }
-                        PRINTTYPEDB("got skext");
+                    }
+                    else if (!strcmp(get_ls(fline.ftoken->toks, 1), "math"))
+                    {
+                        CHECK_MODULE(5)
+
+                        if (getLineSize(&fline) < 4)
+                        {
+                            GET_MATH(get_ls(fline.ftoken->toks, 1))
+                        }
+                        else
+                        {
+                            if (strcmp(get_ls(fline.ftoken->toks, 2), "KW_ALIAS"))
+                            {
+                                I_ERROR(10)
+                            }
+                            GET_MATH(get_ls(fline.ftoken->toks, 3))
+                        }
                     }
                     else
                     {
@@ -850,9 +896,9 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                             if (!strcmp(get_ls(fline.ftoken->toks, 3), "KW_EVAL_BLOCK"))
                             {
                                 int dbl = 0;
-                                for (size_t i = 0; i < strlen(get_ls(fline.ftoken->toks, 3)); i++)
+                                for (size_t i = 0; i < strlen(get_ls(fline.ftoken->toks, 4)); i++)
                                 {
-                                    if (get_ls(fline.ftoken->toks, 3)[i] == '.')
+                                    if (get_ls(fline.ftoken->toks, 4)[i] == '.')
                                     {
                                         dbl = 1;
                                         break;
@@ -865,13 +911,13 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                                 if (dbl)
                                 {
                                     char fmt[310];
-                                    sprintf(fmt, "%lf", eval_dbl(&evalCode, get_ls(fline.ftoken->toks, 3)));
+                                    sprintf(fmt, "%lf", eval_dbl(&evalCode, get_ls(fline.ftoken->toks, 4)));
                                     NEW_VALUE(7, get_ls(fline.ftoken->toks, 1), fmt, c);
                                 }
                                 else
                                 {
                                     char fmt[19];
-                                    sprintf(fmt, "%lld", eval_ll(&evalCode, get_ls(fline.ftoken->toks, 3)));
+                                    sprintf(fmt, "%lld", eval_ll(&evalCode, get_ls(fline.ftoken->toks, 4)));
                                     NEW_VALUE(5, get_ls(fline.ftoken->toks, 1), fmt, c);
                                 }
                             }
@@ -989,30 +1035,37 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                 {
                     if (strcmp(get_ls(fline.ftoken->toks, i), "\n"))
                     {
-                        push_ls(&argBuf, get_ls(fline.ftoken->toks, i));
-
-                        if (get_lui16(&(fline.ftoken->isStringL), i))
+                        if (strcmp(get_ls(fline.ftoken->toks, i), "KW_LIST"))
                         {
-                            pushBool_lui16(&isStringArg, TRUE);
-                            push_lui16(&typeArg, 9);
-                        }
-                        else
-                        {
-                            pushBool_lui16(&isStringArg, FALSE);
+                            push_ls(&argBuf, get_ls(fline.ftoken->toks, i));
 
-                            size_t Index = getIndex_ls(&varBuf, get_ls(fline.ftoken->toks, i));
-
-                            if (Index)
+                            if (get_lui16(&(fline.ftoken->isStringL), i))
                             {
-                                size_t *loc = getVarLookUp(&varTable, Index);
-                                push_lui16(&typeArg, loc[0]);
-                                free(loc);
+                                pushBool_lui16(&isStringArg, TRUE);
+                                push_lui16(&typeArg, 9);
                             }
                             else
                             {
-                                I_ERROR(22)
+                                pushBool_lui16(&isStringArg, FALSE);
+
+                                size_t Index = getIndex_ls(&varBuf, get_ls(fline.ftoken->toks, i));
+
+                                if (Index)
+                                {
+                                    size_t *loc = getVarLookUp(&varTable, Index);
+                                    push_lui16(&typeArg, loc[0]);
+                                    free(loc);
+                                }
+                                else
+                                {
+                                    I_ERROR(22)
+                                }
                             }
                         }
+                    }
+                    else
+                    {
+                        I_ERROR(26)
                     }
 
                     i++;
@@ -1023,8 +1076,127 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                 }
 
                 paramInit = 1;
+
+                i++;
+                if (i < getLineSize(&fline))
+                {
+                    // printf("\n%s\n", get_ls(fline.ftoken->toks, i));
+                    if (!strcmp(get_ls(fline.ftoken->toks, i), "KW_INS"))
+                    {
+                        size_t modIndex;
+                        if (!strcmp(get_ls(fline.ftoken->toks, i + 1), "KW_MOD"))
+                        {
+                            if (getLineSize(&fline) < i + 5)
+                            {
+                                I_ERROR(13)
+                            }
+
+                            if (strcmp(get_ls(fline.ftoken->toks, i + 3), "KW_MEMBER"))
+                            {
+                                I_ERROR(26)
+                            }
+
+                            modIndex = getIndex_ls(&moduleNames, get_ls(fline.ftoken->toks, i + 2));
+
+                            if (modIndex || !strcmp(get_ls(fline.ftoken->toks, i + 2), get_ls(&moduleNames, 0)))
+                            {
+                                struct module *module = &modules[modIndex];
+                                // printf("\n%d %s\nindex: %s i: %zu\n", modules[1].functionNames.size,
+                                //        get_ls(fline.ftoken->toks, 4), module->functionNames.data[0], modIndex);
+                                size_t funcI = getIndex_ls(&(module->functionNames), get_ls(fline.ftoken->toks, i + 4));
+                                // printf("\n%d %s\nindex: %s i: %zu\n", modules.data[0]->functionNames.size,
+                                //        get_ls(fline.ftoken->toks, 4), module->functionNames.data[1], funcI);
+
+                                if (funcI ||
+                                    !strcmp(get_ls(fline.ftoken->toks, i + 4), get_ls(&(module->functionNames), 0)))
+                                {
+                                    struct functionSig *sig = malloc(sizeof(struct functionSig));
+                                    sig = get_sig(&(module->functionSignatures), funcI);
+
+                                    if (getSize_ls(&argBuf) != sig->numArgs)
+                                    {
+                                        I_ERROR(28)
+                                    }
+
+                                    for (size_t j = 0; j < sig->argID.size; j++)
+                                    {
+                                        if (get_lui16(&typeArg, j) != get_lui16(&(sig->argID), j) &&
+                                            get_lui16(&(sig->argID), j) != 0)
+                                        {
+                                            switch (get_lui16(&(sig->argID), j))
+                                            {
+                                            case 1:
+                                                if (get_lui16(&typeArg, j) != 1)
+                                                {
+                                                    I_ERROR(20)
+                                                }
+                                                break;
+                                            case 2:
+                                            case 3:
+                                            case 4:
+                                            case 5:
+                                                if (!(get_lui16(&typeArg, j) > 1 && get_lui16(&typeArg, j) < 6))
+                                                {
+                                                    I_ERROR(20)
+                                                }
+                                                break;
+                                            case 6:
+                                            case 7:
+                                                if (!(get_lui16(&typeArg, j) > 5 && get_lui16(&typeArg, j) < 8))
+                                                {
+                                                    I_ERROR(20)
+                                                }
+                                                break;
+                                            case 8:
+                                                if (get_lui16(&typeArg, j) != 8)
+                                                {
+                                                    I_ERROR(20)
+                                                }
+                                            case 9:
+                                                if (get_lui16(&typeArg, j) != 8 && get_lui16(&typeArg, j) != 9)
+                                                {
+                                                    I_ERROR(20)
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    size_t r = sig->call();
+
+                                    clear_ls(&argBuf);
+                                    clear_lui16(&isStringArg);
+                                    clear_lui16(&typeArg);
+
+                                    if (r)
+                                    {
+                                        I_ERROR(r)
+                                    }
+                                }
+                                else
+                                {
+                                    I_ERROR(27)
+                                }
+                            }
+                            else
+                            {
+                                I_ERROR(11)
+                            }
+                        }
+                        else
+                        {
+                            I_ERROR(26)
+                        }
+
+                        paramInit = 0;
+                    }
+                    else
+                    {
+                        I_ERROR(26)
+                    }
+                }
             }
-            else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_CALL"))
+            else if (!strcmp(get_ls(fline.ftoken->toks, 0), "KW_MOD"))
             {
                 if (falseExp)
                 {
@@ -1035,169 +1207,166 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
 
                 PRINTTYPEDB("function call");
 
-                if (getLineSize(&fline) < 2)
+                if (getLineSize(&fline) < 4)
                 {
                     I_ERROR(13)
                 }
 
                 size_t modIndex;
-                if (!strcmp(get_ls(fline.ftoken->toks, 1), "KW_MOD"))
+
+                if (strcmp(get_ls(fline.ftoken->toks, 2), "KW_MEMBER"))
                 {
-                    if (getLineSize(&fline) < 5)
+                    I_ERROR(26)
+                }
+
+                modIndex = getIndex_ls(&moduleNames, get_ls(fline.ftoken->toks, 1));
+
+                if (modIndex || !strcmp(get_ls(fline.ftoken->toks, 1), get_ls(&moduleNames, 0)))
+                {
+                    struct module *module = &modules[modIndex];
+                    // printf("\n%d %s\nindex: %s i: %zu\n", modules[1].functionNames.size,
+                    //        get_ls(fline.ftoken->toks, 4), module->functionNames.data[0], modIndex);
+                    size_t funcI = getIndex_ls(&(module->functionNames), get_ls(fline.ftoken->toks, 3));
+                    // printf("\n%d %s\nindex: %s i: %zu\n", modules.data[0]->functionNames.size,
+                    //        get_ls(fline.ftoken->toks, 4), module->functionNames.data[1], funcI);
+
+                    if (funcI || !strcmp(get_ls(fline.ftoken->toks, 3), get_ls(&(module->functionNames), 0)))
                     {
-                        I_ERROR(13)
-                    }
+                        struct functionSig *sig = malloc(sizeof(struct functionSig));
+                        sig = get_sig(&(module->functionSignatures), funcI);
 
-                    if (strcmp(get_ls(fline.ftoken->toks, 3), "KW_MEMBER"))
-                    {
-                        I_ERROR(26)
-                    }
-
-                    modIndex = getIndex_ls(&moduleNames, get_ls(fline.ftoken->toks, 2));
-
-                    if (modIndex || !strcmp(get_ls(fline.ftoken->toks, 2), get_ls(&moduleNames, 0)))
-                    {
-                        struct module *module = &modules[modIndex];
-                        // printf("\n%d %s\nindex: %s i: %zu\n", modules[1].functionNames.size,
-                        //        get_ls(fline.ftoken->toks, 4), module->functionNames.data[0], modIndex);
-                        size_t funcI = getIndex_ls(&(module->functionNames), get_ls(fline.ftoken->toks, 4));
-                        // printf("\n%d %s\nindex: %s i: %zu\n", modules.data[0]->functionNames.size,
-                        //        get_ls(fline.ftoken->toks, 4), module->functionNames.data[1], funcI);
-
-                        if (funcI)
+                        if (getSize_ls(&argBuf) != sig->numArgs)
                         {
-                            struct functionSig *sig = malloc(sizeof(struct functionSig));
-                            sig = get_sig(&(module->functionSignatures), funcI);
+                            I_ERROR(28)
+                        }
 
-                            if (getSize_ls(&argBuf) < sig->numArgs)
+                        for (size_t i = 0; i < sig->argID.size; i++)
+                        {
+                            if (get_lui16(&typeArg, i) != get_lui16(&(sig->argID), i) &&
+                                get_lui16(&(sig->argID), i) != 0)
                             {
-                                I_ERROR(28)
-                            }
-
-                            for (size_t i = 0; i < sig->argID.size; i++)
-                            {
-                                if (get_lui16(&typeArg, i) != get_lui16(&(sig->argID), i) &&
-                                    get_lui16(&(sig->argID), i) != 0)
+                                switch (get_lui16(&(sig->argID), i))
                                 {
-                                    switch (get_lui16(&(sig->argID), i))
+                                case 1:
+                                    if (get_lui16(&typeArg, i) != 1)
                                     {
-                                    case 1:
-                                        if (get_lui16(&typeArg, i) != 1)
-                                        {
-                                            I_ERROR(20)
-                                        }
-                                        break;
-                                    case 2:
-                                    case 3:
-                                    case 4:
-                                    case 5:
-                                        if (!(get_lui16(&typeArg, i) > 1 && get_lui16(&typeArg, i) < 6))
-                                        {
-                                            I_ERROR(20)
-                                        }
-                                        break;
-                                    case 6:
-                                    case 7:
-                                        if (!(get_lui16(&typeArg, i) > 5 && get_lui16(&typeArg, i) < 8))
-                                        {
-                                            I_ERROR(20)
-                                        }
-                                        break;
-                                    case 8:
-                                        if (get_lui16(&typeArg, i) != 8)
-                                        {
-                                            I_ERROR(20)
-                                        }
-                                    case 9:
-                                        if (get_lui16(&typeArg, i) != 8 && get_lui16(&typeArg, i) != 9)
-                                        {
-                                            I_ERROR(20)
-                                        }
-                                        break;
+                                        I_ERROR(20)
                                     }
+                                    break;
+                                case 2:
+                                case 3:
+                                case 4:
+                                case 5:
+                                    if (!(get_lui16(&typeArg, i) > 1 && get_lui16(&typeArg, i) < 6))
+                                    {
+                                        I_ERROR(20)
+                                    }
+                                    break;
+                                case 6:
+                                case 7:
+                                    if (!(get_lui16(&typeArg, i) > 5 && get_lui16(&typeArg, i) < 8))
+                                    {
+                                        I_ERROR(20)
+                                    }
+                                    break;
+                                case 8:
+                                    if (get_lui16(&typeArg, i) != 8)
+                                    {
+                                        I_ERROR(20)
+                                    }
+                                case 9:
+                                    if (get_lui16(&typeArg, i) != 8 && get_lui16(&typeArg, i) != 9)
+                                    {
+                                        I_ERROR(20)
+                                    }
+                                    break;
                                 }
-                            }
-
-                            size_t r = sig->call();
-
-                            if (r)
-                            {
-                                I_ERROR(r)
                             }
                         }
-                        else
+
+                        size_t r = sig->call();
+
+                        clear_ls(&argBuf);
+                        clear_lui16(&isStringArg);
+                        clear_lui16(&typeArg);
+
+                        if (r)
                         {
-                            if (!strcmp(get_ls(fline.ftoken->toks, 4), get_ls(&(module->functionNames), 0)))
-                            {
-                                struct functionSig *sig = malloc(sizeof(struct functionSig));
-                                sig = get_sig(&(module->functionSignatures), funcI);
-
-                                if (getSize_ls(&argBuf) != sig->numArgs)
-                                {
-                                    I_ERROR(28)
-                                }
-
-                                for (size_t i = 0; i < sig->argID.size; i++)
-                                {
-                                    switch (get_lui16(&(sig->argID), i))
-                                    {
-                                    case 1:
-                                        if (get_lui16(&typeArg, i) != 1)
-                                        {
-                                            I_ERROR(20)
-                                        }
-                                        break;
-                                    case 2:
-                                    case 3:
-                                    case 4:
-                                    case 5:
-                                        if (!(get_lui16(&typeArg, i) > 1 && get_lui16(&typeArg, i) < 6))
-                                        {
-                                            I_ERROR(20)
-                                        }
-                                        break;
-                                    case 6:
-                                    case 7:
-                                        if (!(get_lui16(&typeArg, i) > 5 && get_lui16(&typeArg, i) < 8))
-                                        {
-                                            I_ERROR(20)
-                                        }
-                                        break;
-                                    case 8:
-                                        if (get_lui16(&typeArg, i) != 8)
-                                        {
-                                            I_ERROR(20)
-                                        }
-                                    case 9:
-                                        if (get_lui16(&typeArg, i) != 8 && get_lui16(&typeArg, i) != 9)
-                                        {
-                                            I_ERROR(20)
-                                        }
-                                        break;
-                                    }
-                                }
-
-                                size_t r = sig->call();
-
-                                if (r)
-                                {
-                                    I_ERROR(r)
-                                }
-                            }
-                            else
-                            {
-                                I_ERROR(27)
-                            }
+                            I_ERROR(r)
                         }
                     }
                     else
                     {
-                        I_ERROR(11)
+                        I_ERROR(27)
                     }
+                    // else
+                    // {
+                    //     if (!strcmp(get_ls(fline.ftoken->toks, 4), get_ls(&(module->functionNames), 0)))
+                    //     {
+                    //         struct functionSig *sig = malloc(sizeof(struct functionSig));
+                    //         sig = get_sig(&(module->functionSignatures), funcI);
+
+                    //         if (getSize_ls(&argBuf) != sig->numArgs)
+                    //         {
+                    //             I_ERROR(28)
+                    //         }
+
+                    //         for (size_t i = 0; i < sig->argID.size; i++)
+                    //         {
+                    //             switch (get_lui16(&(sig->argID), i))
+                    //             {
+                    //             case 1:
+                    //                 if (get_lui16(&typeArg, i) != 1)
+                    //                 {
+                    //                     I_ERROR(20)
+                    //                 }
+                    //                 break;
+                    //             case 2:
+                    //             case 3:
+                    //             case 4:
+                    //             case 5:
+                    //                 if (!(get_lui16(&typeArg, i) > 1 && get_lui16(&typeArg, i) < 6))
+                    //                 {
+                    //                     I_ERROR(20)
+                    //                 }
+                    //                 break;
+                    //             case 6:
+                    //             case 7:
+                    //                 if (!(get_lui16(&typeArg, i) > 5 && get_lui16(&typeArg, i) < 8))
+                    //                 {
+                    //                     I_ERROR(20)
+                    //                 }
+                    //                 break;
+                    //             case 8:
+                    //                 if (get_lui16(&typeArg, i) != 8)
+                    //                 {
+                    //                     I_ERROR(20)
+                    //                 }
+                    //             case 9:
+                    //                 if (get_lui16(&typeArg, i) != 8 && get_lui16(&typeArg, i) != 9)
+                    //                 {
+                    //                     I_ERROR(20)
+                    //                 }
+                    //                 break;
+                    //             }
+                    //         }
+
+                    //         size_t r = sig->call();
+
+                    //         if (r)
+                    //         {
+                    //             I_ERROR(r)
+                    //         }
+                    //     }
+                    //     else
+                    //     {
+                    //         I_ERROR(27)
+                    //     }
+                    // }
                 }
                 else
                 {
-                    I_ERROR(26)
+                    I_ERROR(11)
                 }
 
                 paramInit = 0;
@@ -1593,7 +1762,7 @@ int interpret(char *fileName, size_t *eLine, size_t pargc, char *pargv[])
                         }
                         else
                         {
-                            I_ERROR(22)
+                            I_ERROR(23)
                         }
                     }
                     else

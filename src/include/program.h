@@ -1,5 +1,15 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
+
+#include <ctype.h>
+#include <math.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
 #include "lists.h"
 #include "module.h"
 #include "tok.h"
@@ -327,6 +337,12 @@ size_t autoType(size_t i)
     pushBool_lui16(&(varMut), FALSE);                                                                                  \
     pushBool_lui16(&(varDef), TRUE);                                                                                   \
                                                                                                                        \
+    push_ls(&varBuf, "NULL_S");                                                                                        \
+    pushTable(&varTable, 1, natVal.size);                                                                              \
+    pushBool_lui16(&stateVal, FALSE);                                                                                  \
+    pushBool_lui16(&(varMut), FALSE);                                                                                  \
+    pushBool_lui16(&(varDef), TRUE);                                                                                   \
+                                                                                                                       \
     push_ls(&varBuf, "NULL");                                                                                          \
     pushTable(&varTable, 2, natVal.size);                                                                              \
     push_lui16(&natVal, 0);                                                                                            \
@@ -383,5 +399,10 @@ size_t autoType(size_t i)
     {                                                                                                                  \
         free_ls(&(modules[i].functionNames));                                                                          \
         free_lsig(&(modules[i].functionSignatures));                                                                   \
+    }                                                                                                                  \
+                                                                                                                       \
+    if (fileOpen)                                                                                                      \
+    {                                                                                                                  \
+        fclose(currentStream);                                                                                         \
     }                                                                                                                  \
     // printf("\ndone\n");

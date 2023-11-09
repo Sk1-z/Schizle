@@ -1,8 +1,5 @@
 #pragma once
 
-#include <stdlib.h>
-#include <string.h>
-
 #include "lists.h"
 
 // Tokenize string by whitespace and quotes
@@ -46,7 +43,7 @@ token *tokenize(char *string)
     {
         for (size_t i = 0; i <= strLen; i++)
         {
-            if (string[i] == ' ' || string[i] == '\t' || string[i] == ',' || string[i] == '\0')
+            if (string[i] == ' ' || string[i] == '\t' || string[i] == '\0')
             {
                 if (tokLen > 0)
                 {
@@ -72,6 +69,22 @@ token *tokenize(char *string)
 
                     push_lui16(&(tok->isStringL), 0);
                 }
+                wordStart = (char *)string + i + 1;
+            }
+            else if (string[i] == ',')
+            {
+                if (tokLen > 0)
+                {
+                    word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
+                    strncpy(word, wordStart, tokLen);
+                    word[tokLen] = '\0';
+                    push_ls(tok->toks, word);
+                    tokLen = 0;
+
+                    push_lui16(&(tok->isStringL), 0);
+                }
+                push_ls(tok->toks, "KW_LIST");
+                push_lui16(&(tok->isStringL), 0);
                 wordStart = (char *)string + i + 1;
             }
             else if (string[i] == ':')
@@ -110,6 +123,26 @@ token *tokenize(char *string)
                     wordStart = (char *)string + i + 1;
                 }
             }
+            else if (string[i] == '>')
+            {
+                if (string[i + 1] == '>')
+                {
+                    if (tokLen > 0)
+                    {
+                        word = (char *)realloc(word, (tokLen + 1) * sizeof(char));
+                        strncpy(word, wordStart, tokLen);
+                        word[tokLen] = '\0';
+                        push_ls(tok->toks, word);
+                        tokLen = 0;
+
+                        push_lui16(&(tok->isStringL), 0);
+                    }
+                    push_ls(tok->toks, "KW_INS");
+                    push_lui16(&(tok->isStringL), 0);
+                    wordStart = (char *)string + i + 2;
+                    i++;
+                }
+            }
             else if (string[i] == '!')
             {
                 if (string[i + 1] == '[')
@@ -128,9 +161,6 @@ token *tokenize(char *string)
                     push_lui16(&(tok->isStringL), 0);
                     wordStart = (char *)string + i + 2;
                     i++;
-                }
-                else if (string[i + 1] == '<')
-                {
                 }
                 else if (string[i + 1] == '!')
                 {
@@ -166,9 +196,8 @@ token *tokenize(char *string)
                     wordStart = (char *)string + i + 1;
                 }
             }
-            else if (string[i] == ']' || string[i] == '>')
+            else if (string[i] == ']')
             {
-
                 for (size_t j = 0; j < i; j++)
                 {
                     if (string[j] == '!')
