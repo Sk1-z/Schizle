@@ -4,44 +4,22 @@
 
 ## About
 
-Schizle is an *In-progress* Lightweight scripting language with builtin support for compilation into executables written in pure ANSI C with the objective of being simple ,easy to learn, and lightweight.
+Schizle is a Lightweight scripting language written in pure ANSI C with the objective of being simple ,easy to learn, and lightweight. Get start with Schizle Script [here](docs/NOTDONE.md).
 <br>
-**Current release: 0.4.1**
-<!--
-## Getting started
-
-[Getting started](docs/NOTDONE.md)
--->
-## Helloworld.ski
-Create a file named first_program.ski and write the below into it
+**Current release: 0.5.0**
+## Quick start
+The quickest way to get started to with Schizle Script is to download the latest binary for your respective platform from the [releases page](https://github.com/Sk1-z/Schizle/releases).
+## Building from source
+To build from source you must have premake5. By default, the configuration is for make and windows with compilation by clang. If this does not work for you, you can generate new files using
 ```
-_ Hello world program
-
-get "std lib" as std
-end
-
-!["Hello world"]
-call @std::sout
+premake5 --cc=<cc> --os<platform> <build tool>
 ```
-or if you want something simpler
+Where cc is your C compiler, either gcc, clang, or mingw, and platform is the platform you are using. To generate makefiles you should use gmake as your build tool arg. To see other possible options or configurations you can use 
 ```
-get std
-!["Hello world"] >> @std::sout
+premake5 --help
 ```
-Then run the following command with the Schizle binary for your platform in the same directory, or on the path.
+or visit the [docs](https://premake.github.io/docs/Using-Premake). If you used gmake, you can build it using
 ```
-Schizle first_program.ski
+make config=release_<platform>
 ```
-The output should be
-```
-Hello world
-```
-<!--
-## Documentation
-
-[View docs online](docs/NOTDONE.md)
-
-[View docs on github](docs/NOTDONE.md)
-
-[Download Documentation](docs/NOTDONE.md)
--->
+where platform is either windows, linux, or mac.
