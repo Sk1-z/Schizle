@@ -115,8 +115,8 @@
     struct functionSig int_frac_sig;                                                                                   \
     init_sig(&int_frac_sig);                                                                                           \
     int_frac_sig.numArgs = 2;                                                                                          \
-    push_lui16(&(int_frac_sig.argID), 5);                                                                              \
     push_lui16(&(int_frac_sig.argID), 7);                                                                              \
+    push_lui16(&(int_frac_sig.argID), 5);                                                                              \
     int_frac_sig.call = int_frac;                                                                                      \
                                                                                                                        \
     push_sig(&(std.functionSignatures), &int_frac_sig);                                                                \
@@ -125,8 +125,8 @@
     struct functionSig frac_int_sig;                                                                                   \
     init_sig(&frac_int_sig);                                                                                           \
     frac_int_sig.numArgs = 2;                                                                                          \
-    push_lui16(&(frac_int_sig.argID), 7);                                                                              \
     push_lui16(&(frac_int_sig.argID), 5);                                                                              \
+    push_lui16(&(frac_int_sig.argID), 7);                                                                              \
     frac_int_sig.call = frac_int;                                                                                      \
                                                                                                                        \
     push_sig(&(std.functionSignatures), &frac_int_sig);                                                                \

@@ -142,6 +142,10 @@ token *tokenize(char *string)
                     wordStart = (char *)string + i + 2;
                     i++;
                 }
+                else
+                {
+                    tokLen++;
+                }
             }
             else if (string[i] == '!')
             {

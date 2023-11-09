@@ -1,37 +1,32 @@
 get std
-get math as m
 
-!exp = {2.0 ^ 4}
+!exp = {2.0 ^ 32.0}
 
 !numFactors = 0
 !factor = 0.0
 !numRuns = 1.0
-!num = 0.0
+!ff: nat64
 
 !upper = {$exp ^ 0.5}
-![upper] >> @m::ceil
 
 dur ($numRuns <= $upper)
-    !["Start: "] >> @std::sout
-    num = {$exp % $numRuns}
-    ![num] >> @std::soutln
-    if ($num = 0)
-        ![numRuns] >> @std::soutln
+    if ({1.0 * {$exp % $numRuns}} = 0)
+        ![ff, numRuns] >> @std::frac>int
+        ![ff] >> @std::soutln
 
         if (not ($numRuns = {1.0 * {$exp / $numRuns}}))
             factor = {$exp / $numRuns}
-            ![factor] >> @std::soutln
+            ![ff, factor] >> @std::frac>int
+            ![ff] >> @std::soutln
             numFactors = {$numFactors + 2}
-        elseif(on)
+        else
             numFactors = {$numFactors + 1}
         end
-    else
-        !["Not"] >> @std::soutln
     end
 
     
     numRuns = {$numRuns + 1}
 end
 
-!["Number of factors: "] >> @std::sout
+!["\nNumber of factors: "] >> @std::sout
 ![numFactors] >> @std::sout
